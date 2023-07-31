@@ -1,0 +1,4 @@
+checkpoint_loc: /share/nas2/walml/repos/gz-decals-classifiers/results/pytorch/desi/_desi_pytorch_v5_hpv2_train_all_notest_m3/checkpoints/epoch=49-step=37250.ckpt
+label_cols_name: decals_all_campaigns_ortho_label_cols
+color: False
+resize_after_crop: 224

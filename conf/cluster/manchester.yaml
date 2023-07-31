@@ -1,0 +1,9 @@
+start_snippet_index: ???
+end_snippet_index: ???
+task_id: ???
+snippets_per_node_batch: 20
+overwrite: False
+batch_size: 64
+num_workers: 10
+devices: 1
+accelerator: gpu

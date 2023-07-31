@@ -1,0 +1,9 @@
+start_snippet_index: 0
+end_snippet_index: 5  # exclusive
+task_id: 42
+snippets_per_node_batch: 2
+overwrite: True
+batch_size: 16
+num_workers: 4
+devices: auto
+accelerator: cpu

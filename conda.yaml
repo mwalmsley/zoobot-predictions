@@ -1,0 +1,15 @@
+# conda env create -f conda.yaml
+name: zoobot-predictions
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy
+  - pandas
+  - pyarrow
+  - hydra-core
+  - omegaconf
+  # plus some dependencies not yet on pip
+  # -e ../zoobot[pytorch_m1] (or similar)
+  # -e ../galaxy-datasets[pytorch]
