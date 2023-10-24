@@ -7,11 +7,9 @@ import pandas as pd
 
 if __name__ == '__main__':
 
-    # using Cosmic Dawn uploaded subjects as an example
-    # import will only work for GZ people
-    from galaxy_datasets import gz_cosmic_dawn
-    download = False
-    master_catalog, _  = gz_cosmic_dawn(root='/Users/user/repos/zoobot-predictions/example/data', download=download, train=True)
+    from galaxy_datasets import demo_rings
+    download = True
+    master_catalog, _  = demo_rings(root='data/example/download_root', download=download, train=True)
     # TODO replace with your galaxy catalog
     # master_catalog = pd.read_parquet(...)
 
@@ -25,15 +23,10 @@ if __name__ == '__main__':
     
     master_catalog = master_catalog.sort_values('id_str')
 
-    # one has a dodgy image
-    master_catalog = master_catalog[~master_catalog['file_loc'].str.endswith('aae47c8-1a00-477c-9eb2-5b7825e2d8b3.png')]
-
     galaxy_start_index = 0
-    snippet_size = 10000
+    snippet_size = 256  # TODO for demo purposes, very small snippets
     while galaxy_start_index < len(master_catalog):
         galaxy_end_index = galaxy_start_index + snippet_size
         snippet = master_catalog[galaxy_start_index:galaxy_end_index][['id_str', 'file_loc']]
-        # TODO for demo purposes, very small snippets
-        snippet = snippet[:32]
-        snippet.to_csv(f'example/snippets/snippet_{galaxy_start_index}_{galaxy_end_index}.csv', index=False)
+        snippet.to_csv(f'data/example/snippets/snippet_{galaxy_start_index}_{galaxy_end_index}.csv', index=False)
         galaxy_start_index = galaxy_end_index

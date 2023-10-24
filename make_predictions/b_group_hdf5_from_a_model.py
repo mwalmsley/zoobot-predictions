@@ -9,11 +9,11 @@ from zoobot.shared import save_predictions, load_predictions
 
 import utils
 
-@hydra.main(version_base=None, config_path="../conf")
+@hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
 
-    model_name = utils.get_model_name(config.model.checkpoint_loc)
-    pred_locs = glob.glob(os.path.join(config.galaxies.predictions_dir, model_name, '*_preds_{}.hdf5'.format(model_name)))
+    # model_name = utils.get_model_name(config.model.checkpoint_loc)
+    pred_locs = glob.glob(os.path.join(config.predictions_dir, config.model.model_name, '*_preds.hdf5'))
     assert pred_locs
     pred_locs.sort()
     logging.info('Found {} prediction hdf5 snippets to load e.g. {}'.format(len(pred_locs), pred_locs[0]))
@@ -30,7 +30,7 @@ def main(config: DictConfig):
 
 
     question_suffix = config.aggregation.question_suffix 
-    if question_suffix != '':
+    if question_suffix is not None:
         if any([question_suffix in col for col in label_cols]):
             logging.info(f'survey suffix {question_suffix} detected in label_cols')
             # rewriting variables, feels clearer
@@ -39,7 +39,7 @@ def main(config: DictConfig):
             predictions = predictions[:, question_has_target_suffix]
             label_cols = label_cols[question_has_target_suffix]
 
-    save_loc = os.path.join(config.galaxies.predictions_dir, model_name + '_grouped.hdf5')
+    save_loc = os.path.join(config.predictions_dir, config.model.model_name, 'grouped.hdf5')
 
     # all predictions must fit in memory
     save_predictions.predictions_to_hdf5(predictions, galaxy_id_df['id_str'].values, label_cols, save_loc)

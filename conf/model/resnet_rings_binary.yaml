@@ -1,0 +1,7 @@
+model_name: resnet_rings
+zoobot_class: FinetuneableZoobotClassifier
+checkpoint_loc: data/example/model/binary_ring_resnet_greyscale.ckpt
+encoder_loc: /home/walml/repos/zoobot-predictions/data/example/model/resnet50_greyscale_224px.ckpt  # only used to save arch.
+label_cols_name: rings_label_cols
+color: False
+resize_after_crop: 224

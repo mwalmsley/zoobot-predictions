@@ -13,7 +13,7 @@ from zoobot.shared import save_predictions, load_predictions
 @hydra.main(version_base=None, config_path="../conf")
 def main(config: DictConfig):
 
-    glob_str = config.aggregation.snippet_glob.replace('STAR', '*')  # swap in python, avoids bash getting confused
+    glob_str = os.path.join(config.predictions_dir, '*/grouped.hdf5')  # * for predictions from any model
     
     logging.info('Searching for {}'.format(glob_str))
     pred_locs = glob.glob(glob_str)
@@ -56,9 +56,10 @@ def main(config: DictConfig):
 
 
     # write to hdf5, re-using the save_predictions func
-    save_predictions.predictions_to_hdf5(all_predictions, id_strs, label_cols, config.aggregation.grouped_hdf5_loc)
+    save_loc = config.predictions_dir + '/grouped_across_models.hdf5'
+    save_predictions.predictions_to_hdf5(all_predictions, id_strs, label_cols, save_loc)
 
-    logging.info('Aggregated predictions stacked across models to {} - exiting gracefully'.format(config.aggregation.grouped_hdf5_loc))
+    logging.info('Aggregated predictions stacked across models to {} - exiting gracefully'.format(save_loc))
 
 
 

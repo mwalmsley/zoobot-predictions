@@ -1,4 +1,4 @@
-checkpoint_loc: /Users/user/repos/zoobot-predictions/example/model/evo_py_co_vittiny_224_6848/checkpoints/epoch=68-step=86526.ckpt
-label_cols_name: gz_evo_v2_label_cols  # anything in galaxy_datasets.shared.label_metadata
+checkpoint_loc: data/example/model/evo_py_co_vittiny_224_6848/checkpoints/epoch=68-step=86526.ckpt
+label_cols_name: gz_rings  # anything in galaxy_datasets.shared.label_metadata
 color: True
 resize_after_crop: 224

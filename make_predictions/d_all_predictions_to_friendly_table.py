@@ -8,7 +8,7 @@ from omegaconf import DictConfig
 from zoobot.shared import schemas, load_predictions
 
 
-@hydra.main(version_base=None, config_path="../conf")
+@hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
 
     """
@@ -28,7 +28,8 @@ def main(config: DictConfig):
     """
     debug_trigger_dirs = [
         '/nvme1/scratch/walml',
-        '/User/user'
+        '/User/user',
+        '/home/walml'
     ]
     if any([os.path.isdir(trigger_dir) for trigger_dir in debug_trigger_dirs]):
         logging.warning('Debug system detected - forcing debug mode')
@@ -36,9 +37,12 @@ def main(config: DictConfig):
     else:
         debug = config.aggregation.debug
 
-    schema = schemas.desi_schema
+    schema = getattr(schemas, config.model.schema_name)
     
-    load_predictions.prediction_hdf5_to_summary_parquet(config.aggregation.grouped_hdf5_loc, config.aggregation.final_tables_loc, schema, debug)
+    grouped_across_models_loc = os.path.join(config.predictions_dir, 'grouped_across_models.hdf5')
+    
+    final_predictions_loc = os.path.join(config.predictions_dir, 'predictions.parquet')  # will be renamed to _friendly.parquet, _advanced.paruet
+    load_predictions.prediction_hdf5_to_summary_parquet(grouped_across_models_loc, final_predictions_loc, schema, debug)
 
 
 if __name__ == '__main__':

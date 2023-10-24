@@ -1,5 +1,2 @@
-snippet_glob: /Users/user/repos/zoobot-predictions/example/predictions/evo_py_co_vittiny_224_STAR_grouped.hdf5 
-grouped_hdf5_loc: /Users/user/repos/zoobot-predictions/example/predictions/evo_py_co_vittiny_224_all.hdf5
-final_tables_loc: /Users/user/repos/zoobot-predictions/example/evo_py_co_vittiny_224.parquet  # _friendly and _advanced automatically
-question_suffix: -cd
+question_suffix: null
 debug: False
