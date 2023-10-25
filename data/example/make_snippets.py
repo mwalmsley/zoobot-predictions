@@ -24,7 +24,7 @@ if __name__ == '__main__':
     master_catalog = master_catalog.sort_values('id_str')
 
     galaxy_start_index = 0
-    snippet_size = 256  # TODO for demo purposes, very small snippets
+    snippet_size = 16  # TODO for demo purposes, very small snippets
     while galaxy_start_index < len(master_catalog):
         galaxy_end_index = galaxy_start_index + snippet_size
         snippet = master_catalog[galaxy_start_index:galaxy_end_index][['id_str', 'file_loc']]

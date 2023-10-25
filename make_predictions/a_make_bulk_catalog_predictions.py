@@ -61,12 +61,15 @@ def predict_on_snippets(
     ):
     logging.info('Using snippet indices: {} to {}'.format(config.cluster.start_snippet_index, config.cluster.end_snippet_index))
 
-    num_snippets_to_load = config.cluster.snippets_per_node_batch  # must be evenly divisible into length of relevant snippets (e.g. 10, 20, 100 for 0-100)
-
+    max_snippets_to_load = config.cluster.snippets_per_node_batch
     this_batch_start = config.cluster.start_snippet_index
-    this_batch_end = config.cluster.start_snippet_index + num_snippets_to_load
-
     while this_batch_start <= config.cluster.end_snippet_index:
+
+        # select the snippets to load
+        # either simply get this index + max snippets to load, or,
+        # stop at end_snippet_index
+        this_batch_end = min(config.cluster.end_snippet_index, this_batch_start + max_snippets_to_load)
+
         logging.info('Prediction batch: {} to {}'.format(this_batch_start, this_batch_end))
 
         this_batch_snippet_locs = snippet_locs[this_batch_start:this_batch_end]
