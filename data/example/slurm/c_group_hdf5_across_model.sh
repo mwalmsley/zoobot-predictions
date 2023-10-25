@@ -6,21 +6,14 @@
 #SBATCH --time=128:00:00
 #SBATCH -N 1   # 1 node
 #SBATCH -c 16
-#SBATCH --exclusive  # might as well, only need 20 nodes
+#SBATCH --exclusive
 #SBATCH --dependency=afterok:76677
 
 pwd; hostname; date
 
 PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
-
-# PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
-
-# STAR not *, will swap in python - or bash gets confused
-# GLOB_STR=$PREDICTIONS_DIR/_desi_pytorch_v5_hpv2_train_all_notest_mSTAR_grouped.hdf5
-# SAVE_LOC=$PREDICTIONS_DIR/_desi_pytorch_v5_hpv2_train_all_notest_all.hdf5
-
-$PYTHON /share/nas2/walml/repos/gz-decals-classifiers/make_predictions/c_group_hdf5_across_models.py
-
-#  \
-#     --glob $GLOB_STR \
-#     --save-loc $SAVE_LOC
+PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/debug_predictions
+srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/c_group_hdf5_across_models.py \
+    +predictions_dir=$PREDICTIONS_DIR \
+    +model=effnet_rings_dirichlet  \
+    +aggregation=manchester
