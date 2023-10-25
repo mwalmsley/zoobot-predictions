@@ -1,6 +1,6 @@
 model_name: maxvit_evo
 zoobot_class: ZoobotTree
-checkpoint_loc: data/models/maxvittiny_color_224.ckpt
+checkpoint_loc: data/models/maxvittiny_color_224px.ckpt
 encoder_loc: null
 label_cols_name: gz_evo_v1_label_cols
 schema_name: gz_evo_v1_schema
