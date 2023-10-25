@@ -18,4 +18,5 @@ srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/b_group
     +predictions_dir=$PREDICTIONS_DIR \
     +cluster=manchester \
     +galaxies=example \
-    +model=effnet_rings_dirichlet
+    +model=effnet_rings_dirichlet \
+    +aggregation=hsc_pdr3

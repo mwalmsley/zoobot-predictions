@@ -22,8 +22,8 @@ def main(config: DictConfig):
     # df: rows of id_str, hdf5_loc
     # predictions: model predictions, usually dirichlet concentrations, like (galaxy, answer, forward pass)
     # will have been concatenated across locs
-    assert not any(galaxy_id_df['id_str'].duplicated())  # we don't expect any duplicate predictions
-    assert len(galaxy_id_df) == len(predictions)
+    assert not any(galaxy_id_df['id_str'].duplicated()), galaxy_id_df['id_str'].value_counts()  # we don't expect any duplicate predictions
+    assert len(galaxy_id_df) == len(predictions), (len(galaxy_id_df), len(predictions))
     logging.info('All predictions loaded')
 
     # write to hdf5, re-using the save_predictions func

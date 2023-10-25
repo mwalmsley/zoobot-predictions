@@ -24,11 +24,11 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example/predictions +cluster=local_debug +galaxies=example +model=effnet_rings_dirichlet
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=example
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet  +aggregation=local_debug
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet  +aggregation=example
 
-    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=example
 
 Apart from the conda.yaml requirements, you will need the very latest `zoobot` and `galaxy-datasets` packages from github (or pip, though that may be outdated quickly).
 
