@@ -32,7 +32,14 @@ echo Using start snippet $START_SNIPPET_INDEX
 END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using end snippet $END_SNIPPET_INDEX
 
-PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions_
+PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
+
+# MODEL=maxvit_tiny_evo
+# GALAXIES=desi
+
+# or rings
+MODEL=effnet_rings_dirichlet
+GALAXIES=desi
 
 srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
     +cluster.start_snippet_index=$START_SNIPPET_INDEX \
@@ -40,5 +47,5 @@ srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_
     +cluster.task_id=$SLURM_ARRAY_TASK_ID \
     +predictions_dir=$PREDICTIONS_DIR \
     +cluster=manchester \
-    +galaxies=desi \
-    +model=maxvit_tiny_evo
+    +galaxies=$GALAXIES \
+    +model=$MODEL
