@@ -28,8 +28,8 @@ def main(config: DictConfig):
     """
     debug_trigger_dirs = [
         '/nvme1/scratch/walml',
-        '/User/user',
-        '/home/walml'
+        '/User/user/',
+        '/home/walml/repos'
     ]
     if any([os.path.isdir(trigger_dir) for trigger_dir in debug_trigger_dirs]):
         logging.warning('Debug system detected - forcing debug mode')

@@ -1,5 +1,4 @@
 subset_loc: ''
-predictions_dir: /share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 snippet_dir: /share/nas2/walml/galaxy_zoo/decals/dr8/checks
 n_samples: 5
 question_suffix: '-dr8'
