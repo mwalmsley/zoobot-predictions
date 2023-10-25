@@ -1,4 +1,8 @@
+model_name: effnet_rings_dirichlet
+zoobot_class: ZoobotTree
 checkpoint_loc: data/example/model/evo_py_co_vittiny_224_6848/checkpoints/epoch=68-step=86526.ckpt
+encoder_loc: null
 label_cols_name: gz_rings  # anything in galaxy_datasets.shared.label_metadata
+schema_name: gz_evo_v2_schema
 color: True
 resize_after_crop: 224
