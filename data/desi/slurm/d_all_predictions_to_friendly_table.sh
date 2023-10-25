@@ -12,16 +12,19 @@ pwd; hostname; date
 
 PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
 
-# PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 
-# HDF5_LOC=$PREDICTIONS_DIR/_desi_pytorch_v5_hpv2_train_all_notest_all.hdf5
-# SAVE_LOC=$PREDICTIONS_DIR/_desi_pytorch_v5_hpv2_train_all_notest_ml_catalog_x2.parquet
+PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 
-$PYTHON /share/nas2/walml/repos/gz-decals-classifiers/make_predictions/d_all_predictions_to_friendly_table.py
+# MODEL=maxvit_tiny_evo
+# GALAXIES=desi
+# AGGREGATION=desi
 
-#  \
-#     --hdf5-loc $HDF5_LOC \
-#     --save-loc $SAVE_LOC
-    
-    #  \
-    # --debug
+# or rings
+MODEL=effnet_rings_dirichlet
+GALAXIES=desi
+AGGREGATION=example  # fine here, no suffix
+
+srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/d_all_predictions_to_friendly_table.py \
+    +predictions_dir=$PREDICTIONS_DIR \
+    +model=effnet_rings_dirichlet  \
+    +aggregation=$AGGREGATION

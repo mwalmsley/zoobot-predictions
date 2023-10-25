@@ -12,18 +12,20 @@ pwd; hostname; date
 
 PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
 
-# m1 done
-# m2 done
-# m3 done
-# m4 done
-# m5 done
-# CHECKPOINT_NAME=_desi_pytorch_v5_hpv2_train_all_notest_m3
-# PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
-# SAVE_LOC=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions/${CHECKPOINT_NAME}_grouped.hdf5
+PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 
-$PYTHON /share/nas2/walml/repos/gz-decals-classifiers/make_predictions/b_group_hdf5_from_a_model.py
+# MODEL=maxvit_tiny_evo
+# GALAXIES=desi
+# AGGREGATION=desi
 
-#  \
-#     --checkpoint-name $CHECKPOINT_NAME \
-#     --predictions-dir $PREDICTIONS_DIR \
-#     --save-loc $SAVE_LOC
+# or rings
+MODEL=effnet_rings_dirichlet
+GALAXIES=desi
+AGGREGATION=example  # fine here, no suffix
+
+srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/b_group_hdf5_from_a_model.py \
+    +predictions_dir=$PREDICTIONS_DIR \
+    +cluster=manchester \
+    +galaxies=$GALAXIES \
+    +model=$MODEL \
+    +aggregation=$AGGREGATION
