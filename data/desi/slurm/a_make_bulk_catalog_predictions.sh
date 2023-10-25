@@ -8,7 +8,7 @@
 #SBATCH -N 1   # 1 node
 #SBATCH -c 16
 #SBATCH --exclusive
-#SBATCH --array=1-3%3
+#SBATCH --array=1-110%10
 
 # snippets have 4096 galaxies each
 # 9M total galaxies, so 2200 snippets total
@@ -32,12 +32,12 @@ echo Using start snippet $START_SNIPPET_INDEX
 END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using end snippet $END_SNIPPET_INDEX
 
-PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
-
+# PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 # MODEL=maxvit_tiny_evo
 # GALAXIES=desi
 
 # or rings
+PREDICTIONS_DIR=data/desi/predictions/rings
 MODEL=effnet_rings_dirichlet
 GALAXIES=desi
 

@@ -14,11 +14,12 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
 
 PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 
+# PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 # MODEL=maxvit_tiny_evo
 # GALAXIES=desi
-# AGGREGATION=desi
 
 # or rings
+PREDICTIONS_DIR=data/desi/predictions/rings
 MODEL=effnet_rings_dirichlet
 GALAXIES=desi
 AGGREGATION=example  # fine here, no suffix
