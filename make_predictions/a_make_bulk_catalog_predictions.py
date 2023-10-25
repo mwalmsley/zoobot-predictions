@@ -109,10 +109,7 @@ def predict_on_snippets(
                 else:
                     predict_on_snippet(config, df, save_loc, model)
 
-            this_batch_start += num_snippets_to_load
-            this_batch_end += num_snippets_to_load
-            if this_batch_end > config.cluster.end_snippet_index:
-                this_batch_end = config.cluster.end_snippet_index
+            this_batch_start = this_batch_end
 
 
 def predict_on_snippet(config, df, save_loc, model):
