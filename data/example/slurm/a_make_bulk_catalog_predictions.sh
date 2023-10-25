@@ -34,5 +34,6 @@ srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_
     +cluster.end_snippet_index=$END_SNIPPET_INDEX \
     +cluster.task_id=$SLURM_ARRAY_TASK_ID \
     +predictions_dir=$PREDICTIONS_DIR \
+    +cluster=manchester \
     +galaxies=example \
     +model=effnet_rings_dirichlet
