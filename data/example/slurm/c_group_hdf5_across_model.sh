@@ -16,4 +16,4 @@ PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/debug_predictions
 srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/c_group_hdf5_across_models.py \
     +predictions_dir=$PREDICTIONS_DIR \
     +model=effnet_rings_dirichlet  \
-    +aggregation=manchester
+    +aggregation=hsc_pdr3
