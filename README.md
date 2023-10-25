@@ -34,6 +34,7 @@ Apart from the conda.yaml requirements, you will need the very latest `zoobot` a
 
 ### Example Predictions on Cluster
 
+    See /data/example/slurm for the slurm scripts. These construct slurm jobs that look just like those above, except for also passing start/end snippet indices so each node can make predictions on different snippets
     python data/example/make_snippets.py 
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example/predictions +cluster=manchester +galaxies=example +model=effnet_rings_dirichlet

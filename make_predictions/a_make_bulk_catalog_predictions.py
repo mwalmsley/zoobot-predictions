@@ -141,8 +141,9 @@ def predict_on_snippet(config, df, save_loc, model):
 
 
 def get_zoobot_model_to_use(config):
-    if config.cluster.accelerator == None:
+    if config.cluster.accelerator == 'gpu':
         map_location = None
+        torch.set_float32_matmul_precision('medium')  # use Ampere cores on A100, H100 by default
     elif config.cluster.accelerator == 'cpu':
         logging.info('Forcing model to load on CPU')
         map_location = torch.device('cpu')
