@@ -20,8 +20,10 @@ PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/predictions
 
 # or rings
 PREDICTIONS_DIR=data/desi/predictions/rings
-MODEL=effnet_rings_dirichlet
+# MODEL=effnet_rings_dirichlet
+MODEL=maxvit_rings_dirichlet
 GALAXIES=desi
+
 AGGREGATION=example  # fine here, no suffix
 
 srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/b_group_hdf5_from_a_model.py \
