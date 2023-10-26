@@ -38,7 +38,8 @@ echo Using end snippet $END_SNIPPET_INDEX
 
 # or rings
 PREDICTIONS_DIR=data/desi/predictions/rings
-MODEL=effnet_rings_dirichlet
+# MODEL=effnet_rings_dirichlet
+MODEL=maxvit_rings_dirichlet
 GALAXIES=desi
 
 srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
@@ -48,4 +49,5 @@ srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_
     +predictions_dir=$PREDICTIONS_DIR \
     +cluster=manchester \
     +galaxies=$GALAXIES \
-    +model=$MODEL
+    +model=$MODEL \
+    +cluster.batch_size=128

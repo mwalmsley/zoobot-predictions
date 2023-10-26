@@ -1,6 +1,6 @@
 model_name: maxvit_rings_dirichlet
 zoobot_class: FinetuneableZoobotTree
-checkpoint_loc: data/models/elated_sweep_maxvit_dirichlet_rings.ckpt
+checkpoint_loc: data/models/maxvittiny_rings_dirichlet.ckpt
 encoder_loc: data/models/maxvittiny_color_224px.ckpt
 label_cols_name: rings_label_cols
 schema_name: gz_rings_schema
