@@ -50,4 +50,4 @@ srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_
     +cluster=manchester \
     +galaxies=$GALAXIES \
     +model=$MODEL \
-    +cluster.batch_size=128
+    ++cluster.batch_size=128
