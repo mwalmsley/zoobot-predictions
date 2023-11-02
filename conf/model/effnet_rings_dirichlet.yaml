@@ -1,0 +1,8 @@
+model_name: effnet_rings_dirichlet
+zoobot_class: FinetuneableZoobotTree
+checkpoint_loc: data/models/elated_sweep_effnet_dirichlet_rings.ckpt
+encoder_loc: data/models/effnetb0_color_224px.ckpt  # only used to save arch.
+label_cols_name: rings_label_cols
+schema_name: gz_rings_schema
+color: True
+resize_after_crop: 224

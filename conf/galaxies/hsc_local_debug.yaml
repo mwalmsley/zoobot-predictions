@@ -1,5 +1,0 @@
-subset_loc: ''
-predictions_dir: /Users/user/repos/zoobot-predictions/example/predictions
-snippet_dir: /Users/user/repos/zoobot-predictions/example/snippets
-n_samples: 2
-question_suffix: '-cd'

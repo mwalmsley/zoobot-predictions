@@ -1,4 +1,8 @@
-checkpoint_loc: /Users/user/repos/zoobot-predictions/example/model/evo_py_co_vittiny_224_6848/checkpoints/epoch=68-step=86526.ckpt
-label_cols_name: gz_evo_v2_label_cols  # anything in galaxy_datasets.shared.label_metadata
+model_name: maxvit_evo
+zoobot_class: ZoobotTree
+checkpoint_loc: data/models/maxvittiny_color_224px.ckpt
+encoder_loc: null
+label_cols_name: gz_evo_v1_label_cols
+schema_name: gz_evo_v1_schema
 color: True
 resize_after_crop: 224
