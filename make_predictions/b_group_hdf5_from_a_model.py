@@ -7,7 +7,7 @@ from omegaconf import DictConfig
 
 from zoobot.shared import save_predictions, load_predictions
 
-import utils
+import make_predictions.model_utils as model_utils
 
 @hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):

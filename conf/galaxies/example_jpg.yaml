@@ -1,4 +1,4 @@
 subset_loc: ''
-shard_dir: data/hsc_pdr3/snippets
+shard_dir: data/example_jpg/snippets
 n_samples: 2
 format: 'jpg'

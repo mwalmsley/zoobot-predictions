@@ -1,0 +1,4 @@
+subset_loc: ''
+shard_dir: data/example_wds/wds
+n_samples: 2
+format: 'wds'

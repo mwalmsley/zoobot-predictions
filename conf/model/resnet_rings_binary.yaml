@@ -5,3 +5,5 @@ encoder_loc: /home/walml/repos/zoobot-predictions/data/example/model/resnet50_gr
 label_cols_name: rings_label_cols
 color: False
 resize_after_crop: 224
+crop_scale_bounds: [0.7, 0.8]
+crop_ratio_bounds: [0.9, 1.1]

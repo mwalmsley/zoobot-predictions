@@ -6,3 +6,5 @@ label_cols_name: gz_evo_v1_label_cols
 schema_name: gz_evo_v1_schema
 color: True
 resize_after_crop: 224
+crop_scale_bounds: [0.7, 0.8]
+crop_ratio_bounds: [0.9, 1.1]

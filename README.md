@@ -16,21 +16,36 @@ The approach is:
 
 To manage the configuration (paths, model options, etc) I use [hydra](https://hydra.cc/docs/intro/). This lets you write yaml config files which can then be mixed-and-matched. See the example below. You will want to make new config files under the `conf` subfolders.
 
+## Install
+
+Requires Zoobot (any version, but must match the version for which the model was trained) and hydra/webdataset. `pip install -r requirements.txt`.
+
+`zoobot-predictions` is not itself a package, just some folders with code.
+
 ### Example Predictions Locally
 
 I've included a working example with 1000 ringed galaxies. Here's the [pretrained model](https://dl.dropboxusercontent.com/s/epam7u354zzx62n/binary_ring_resnet_greyscale.ckpt?dl=0) and the [encoder architecture](https://dl.dropboxusercontent.com/s/hvyfw6avwhep4qqpg4wwg/resnet50_greyscale_224px.ckpt?rlkey=hconeglfnsxt73ot2gq8xg6p3&dl=0).
 
-    python data/example/make_snippets.py 
+    python data/example_jpg/make_snippets.py 
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example/predictions +cluster=local_debug +galaxies=example +model=effnet_rings_dirichlet
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example_jpg/predictions +cluster=local_debug +galaxies=example_jpg +model=effnet_rings_dirichlet
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=example
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example_jpg/predictions +model=effnet_rings_dirichlet +aggregation=example_jpg
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet  +aggregation=example
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/example_jpg/predictions +model=effnet_rings_dirichlet  +aggregation=example_jpg
 
-    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example/predictions +model=effnet_rings_dirichlet +aggregation=example
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example_jpg/predictions +model=effnet_rings_dirichlet +aggregation=example_jpg
 
-Apart from the conda.yaml requirements, you will need the very latest `zoobot` and `galaxy-datasets` packages from github (or pip, though that may be outdated quickly).
+### Example for WDS
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example_wds/predictions +cluster=local_debug +galaxies=example_wds +model=effnet_rings_dirichlet
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example_wds/predictions +model=effnet_rings_dirichlet +aggregation=example
+
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/example_wds/predictions +model=effnet_rings_dirichlet  +aggregation=example
+
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example_wds/predictions +model=effnet_rings_dirichlet +aggregation=example
+
 
 ### Example Predictions on Cluster
 

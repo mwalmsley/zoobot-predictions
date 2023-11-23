@@ -1,0 +1,5 @@
+subset_loc: ''
+shard_dir: data/desi/snippets
+n_samples: 5
+question_suffix: '-dr8'
+format: 'jpg'

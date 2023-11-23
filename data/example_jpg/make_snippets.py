@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     from galaxy_datasets import demo_rings
     download = True
-    master_catalog, _  = demo_rings(root='data/example/download_root', download=download, train=True)
+    master_catalog, _  = demo_rings(root='data/example_jpg/download_root', download=download, train=True)
     # TODO replace with your galaxy catalog
     # master_catalog = pd.read_parquet(...)
 
@@ -28,5 +28,5 @@ if __name__ == '__main__':
     while galaxy_start_index < len(master_catalog):
         galaxy_end_index = galaxy_start_index + snippet_size
         snippet = master_catalog[galaxy_start_index:galaxy_end_index][['id_str', 'file_loc']]
-        snippet.to_csv(f'data/example/snippets/snippet_{galaxy_start_index}_{galaxy_end_index}.csv', index=False)
+        snippet.to_csv(f'data/example_jpg/snippets/snippet_{galaxy_start_index}_{galaxy_end_index}.csv', index=False)
         galaxy_start_index = galaxy_end_index

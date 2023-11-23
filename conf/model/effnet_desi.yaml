@@ -2,3 +2,5 @@ checkpoint_loc: /share/nas2/walml/repos/gz-decals-classifiers/results/pytorch/de
 label_cols_name: decals_all_campaigns_ortho_label_cols
 color: False
 resize_after_crop: 224
+crop_scale_bounds: [0.7, 0.8]
+crop_ratio_bounds: [0.9, 1.1]
