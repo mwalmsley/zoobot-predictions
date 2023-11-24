@@ -11,7 +11,7 @@ pwd; hostname; date
 PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/predictions
-MODEL=maxvit_tiny_desi_wds
+MODEL=effnetb0_f128_desi_wds
 GALAXIES=desi_wds
 AGGREGATION=desi
 

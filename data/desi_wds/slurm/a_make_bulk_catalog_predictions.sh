@@ -26,7 +26,7 @@ END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using end snippet $END_SNIPPET_INDEX
 
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/predictions
-MODEL=maxvit_tiny_desi_wds
+MODEL=effnetb0_f128_desi_wds
 GALAXIES=desi_wds
 
 srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \

@@ -27,7 +27,7 @@ echo Using end snippet $END_SNIPPET_INDEX
 
 # just rename predictions_dir to representations
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/representations
-MODEL=maxvit_tiny_desi_wds
+MODEL=effnetb0_f128_desi_wds
 GALAXIES=desi_wds
 
 srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
