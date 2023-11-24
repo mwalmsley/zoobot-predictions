@@ -7,3 +7,4 @@ batch_size: 16
 num_workers: 4
 devices: auto
 accelerator: cpu
+precision: '32'

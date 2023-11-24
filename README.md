@@ -73,3 +73,8 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
     python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet  +aggregation=local_debug
 
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+
+
+### WDS DESI Predictions
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/desi_wds/predictions +cluster=beluga +galaxies=desi_wds +model=maxvit_tiny_desi_wds

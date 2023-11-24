@@ -55,7 +55,8 @@ class PredictAbstract():
         self.trainer_kwargs = {
             'devices': self.config.cluster.devices,
             'accelerator': self.config.cluster.accelerator,
-            'logger': False
+            'logger': False,
+            'precision': self.config.cluster.precision
         }
 
         self.shard_extension = shard_extension
