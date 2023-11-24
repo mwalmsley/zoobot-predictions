@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --array=1-4%4
+#SBATCH --array=1-12%10
 
 pwd; hostname; date
 
@@ -16,8 +16,8 @@ PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 export NCCL_BLOCKING_WAIT=1
 
-POSSIBLE_START_SNIPPETS=( $(seq -400 400 1200 ) )
-POSSIBLE_END_SNIPPETS=( $(seq 0 400 1600 ) )
+POSSIBLE_START_SNIPPETS=( $(seq -400 400 3600 ) )
+POSSIBLE_END_SNIPPETS=( $(seq 0 400 4000 ) )
 
 START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using start snippet $START_SNIPPET_INDEX
@@ -25,12 +25,11 @@ echo Using start snippet $START_SNIPPET_INDEX
 END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using end snippet $END_SNIPPET_INDEX
 
-# or rings
-PREDICTIONS_DIR=data/desi_wds/predictions
+PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/predictions
 MODEL=maxvit_tiny_desi_wds
 GALAXIES=desi_wds
 
-srun $PYTHON //project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
+srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
     +cluster.start_shard_index=$START_SNIPPET_INDEX \
     +cluster.end_shard_index=$END_SNIPPET_INDEX \
     +cluster.task_id=$SLURM_ARRAY_TASK_ID \
