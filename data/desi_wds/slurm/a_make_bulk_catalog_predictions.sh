@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=desi-pred                    # Job name
 #SBATCH --output=desi-pred_%A_%a.log 
-#SBATCH --time=23:30:0  
+#SBATCH --time=03:30:0  
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
