@@ -80,4 +80,6 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
     # run on slurm, see a_make_bulk_catalog_predictions.sh
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/desi_wds/predictions +cluster=beluga +galaxies=desi_wds +model=maxvit_tiny_desi_wds
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/desi_wds/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/desi_wds/predictions +model=maxvit_tiny_desi_wds +aggregation=desi
+
+    
