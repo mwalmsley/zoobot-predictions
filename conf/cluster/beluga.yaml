@@ -1,7 +1,7 @@
 start_shard_index: ???
 end_shard_index: ???
 task_id: ???
-shards_per_node_batch: 100
+shards_per_node_batch: 100  # Do 100 WDS shards in one go i.e. 2000 * 100 = 200000 images. Impressively, this fits in memory.
 overwrite: False
 batch_size: 64  # 64 for maxvit, 256 for effnetb0
 num_workers: 10

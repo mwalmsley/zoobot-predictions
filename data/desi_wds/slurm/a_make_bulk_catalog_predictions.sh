@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --array=1-1%1
+#SBATCH --array=1-4%4
 
 pwd; hostname; date
 
@@ -16,8 +16,8 @@ PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 export NCCL_BLOCKING_WAIT=1
 
-POSSIBLE_START_SNIPPETS=( $(seq -100 100 1300 ) )
-POSSIBLE_END_SNIPPETS=( $(seq 0 100 1400 ) )
+POSSIBLE_START_SNIPPETS=( $(seq -400 400 1200 ) )
+POSSIBLE_END_SNIPPETS=( $(seq 0 400 1600 ) )
 
 START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
 echo Using start snippet $START_SNIPPET_INDEX
