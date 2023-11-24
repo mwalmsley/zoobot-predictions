@@ -1,5 +1,5 @@
 subset_loc: ''
-shard_dir: TODO
-n_samples: 5
+shard_dir: /project/def-bovy/walml/data/webdatasets/desi_all_300px_2048
+n_samples: 1
 question_suffix: '-dr8'
 format: 'wds'

@@ -1,0 +1,10 @@
+model_name: maxvittiny_rw_224_desi_wds_4gpu
+zoobot_class: ZoobotTree
+checkpoint_loc: /project/def-bovy/walml/zoobot/only_for_me/narval/desi_300px_maxvittiny_rw_224_4gpu/checkpoints/epoch=31-step=30720.ckpt
+encoder_loc: null
+label_cols_name: gz_evo_v1_label_cols
+schema_name: gz_evo_v1_schema
+color: True
+resize_after_crop: 224
+crop_scale_bounds: [0.75, 0.85]
+crop_ratio_bounds: [0.9, 1.1]
