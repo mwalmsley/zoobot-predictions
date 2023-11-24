@@ -8,19 +8,14 @@
 
 pwd; hostname; date
 
-nvidia-smi
-
 PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/predictions
 MODEL=maxvit_tiny_desi_wds
 GALAXIES=desi_wds
-
 AGGREGATION=desi
 
-srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/b_group_hdf5_from_a_model.py \
+srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/d_all_predictions_to_friendly_table.py \
     +predictions_dir=$PREDICTIONS_DIR \
-    +cluster=beluga \
-    +galaxies=$GALAXIES \
     +model=$MODEL \
     +aggregation=$AGGREGATION
