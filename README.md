@@ -52,7 +52,11 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example_wds/representations +model=effnet_rings_dirichlet +aggregation=representations
 
-Saves to {predictions_dir}/{model_name}/grouped.hdf5
+Saves to {predictions_dir}/{model_name}/grouped.hdf5. You might want to make into a parquet with
+
+    python make_predictions/make_representations/to_friendly_table.py \
+    --hdf5-loc data/example_wds/representations/effnet_rings_dirichlet/grouped.hdf5 \
+    --save-loc data/example_wds/representations/effnet_rings_dirichlet/representations.parquet
 
 Doesn't make sense to combine across models etc.
 

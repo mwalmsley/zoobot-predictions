@@ -40,8 +40,12 @@ class PredictAbstract():
         logging.info('Loading Zoobot model')
         self.model = model_utils.get_zoobot_model_to_use(self.config)
 
-        self.label_cols = getattr(label_metadata, self.config.model.label_cols_name)
-        logging.info(f'{len(self.label_cols)} label cols')
+        if 'representations' in self.config.predictions_dir:
+            logging.warning('representations mode - ignoring label_cols')
+            self.label_cols = None  # Zoobot will fill with [feat_0, feat_1 etc]
+        else:
+            self.label_cols = getattr(label_metadata, self.config.model.label_cols_name)
+            logging.info(f'{len(self.label_cols)} label cols')
 
         self.datamodule_kwargs = {
             # these are cluster params, model doesn't care but hardware does

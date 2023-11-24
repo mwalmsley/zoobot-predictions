@@ -14,12 +14,13 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
 
 # CHECKPOINT_NAME=evo_py_gr_eff_224_814
 # CHECKPOINT_NAME=evo_py_gr_vittiny_224_19505
-CHECKPOINT_NAME=evo_py_co_vittiny_224_7325
+# CHECKPOINT_NAME=evo_py_co_vittiny_224_7325
+CHECKPOINT_NAME=desi_300px_f128_1gpu
 
 PREDICTIONS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr8/representations
-HDF5_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}_grouped.hdf5
-SAVE_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}_representations.parquet
+HDF5_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}/grouped.hdf5
+SAVE_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}/representations.parquet
 
-$PYTHON /share/nas2/walml/repos/desi-predictions/make_predictions/representations/to_friendly_table.py \
+$PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/make_representations/to_friendly_table.py \
     --hdf5-loc $HDF5_LOC \
     --save-loc $SAVE_LOC
