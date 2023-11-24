@@ -46,6 +46,15 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
 
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/example_wds/predictions +model=effnet_rings_dirichlet +aggregation=example
 
+### Example for WDS Representations
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example_wds/representations +cluster=local_debug +galaxies=example_wds +model=effnet_rings_dirichlet ++galaxies.n_samples=1
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example_wds/representations +model=effnet_rings_dirichlet +aggregation=representations
+
+Saves to {predictions_dir}/{model_name}/grouped.hdf5
+
+Doesn't make sense to combine across models etc.
 
 ### Example Predictions on Cluster
 
@@ -82,4 +91,6 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/desi_wds/predictions +model=maxvit_tiny_desi_wds +aggregation=desi
 
-    
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/desi_wds/predictions +model=maxvit_tiny_desi_wds  +aggregation=desi
+
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/desi_wds/predictions +model=maxvit_tiny_desi_wds +aggregation=desi

@@ -29,7 +29,7 @@ def main(config: DictConfig):
     debug_trigger_dirs = [
         '/nvme1/scratch/walml',
         '/User/user/',
-        '/home/walml/repos'
+        '/home/walml/programs'
     ]
     if any([os.path.isdir(trigger_dir) for trigger_dir in debug_trigger_dirs]):
         logging.warning('Debug system detected - forcing debug mode')
@@ -37,7 +37,9 @@ def main(config: DictConfig):
     else:
         debug = config.aggregation.debug
 
-    schema = getattr(schemas, config.model.schema_name)
+    # schema = getattr(schemas, config.model.schema_name)\
+    from zoobot.shared import schemas
+    schema = schemas.decals_dr8_ortho_schema
     
     grouped_across_models_loc = os.path.join(config.predictions_dir, 'grouped_across_models.hdf5')
     

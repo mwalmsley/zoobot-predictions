@@ -7,7 +7,6 @@ from omegaconf import DictConfig
 
 from zoobot.shared import save_predictions, load_predictions
 
-import model_utils
 
 @hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
@@ -19,6 +18,8 @@ def main(config: DictConfig):
     logging.info('Found {} prediction hdf5 snippets to load e.g. {}'.format(len(pred_locs), pred_locs[0]))
     
     galaxy_id_df, predictions, label_cols = load_predictions.load_hdf5s(pred_locs)
+    # from galaxy_datasets.shared import label_metadata
+    # label_cols = label_metadata.decals_all_campaigns_ortho_label_cols # TODO temp
     # df: rows of id_str, hdf5_loc
     # predictions: model predictions, usually dirichlet concentrations, like (galaxy, answer, forward pass)
     # will have been concatenated across locs
@@ -37,7 +38,8 @@ def main(config: DictConfig):
             logging.info(f'Saving only survey suffix {question_suffix} predictions, for clarity and storage space')
             question_has_target_suffix = [question_suffix in col for col in label_cols]
             predictions = predictions[:, question_has_target_suffix]
-            label_cols = label_cols[question_has_target_suffix]
+            # label_cols = label_cols[question_has_target_suffix]
+            label_cols = [col for col in label_cols if question_suffix in col]
 
     save_loc = os.path.join(config.predictions_dir, config.model.model_name, 'grouped.hdf5')
 

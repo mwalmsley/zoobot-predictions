@@ -12,6 +12,7 @@ from zoobot.pytorch.estimators import define_model
 
 from make_predictions import a_make_bulk_catalog_predictions
 
+
 def main(checkpoint_loc, color, predictions_dir, start_snippet_index, end_snippet_index, overwrite, subset_loc):
 
     base_dir = '/share/nas2/walml/galaxy_zoo/decals/dr8'
