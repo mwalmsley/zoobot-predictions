@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --array=1-2%1
+#SBATCH --array=1-1%1
 
 pwd; hostname; date
 
@@ -30,7 +30,7 @@ PREDICTIONS_DIR=data/desi_wds/predictions
 MODEL=maxvit_tiny_desi_wds
 GALAXIES=desi_wds
 
-srun $PYTHON /share/nas2/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
+srun $PYTHON //project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \
     +cluster.start_shard_index=$START_SNIPPET_INDEX \
     +cluster.end_shard_index=$END_SNIPPET_INDEX \
     +cluster.task_id=$SLURM_ARRAY_TASK_ID \
