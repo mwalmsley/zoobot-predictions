@@ -38,7 +38,7 @@ I've included a working example with 1000 ringed galaxies. Here's the [pretraine
 
 ### Example for WDS
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example_wds/predictions +cluster=local_debug +galaxies=example_wds +model=effnet_rings_dirichlet
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/example_wds/predictions +cluster=local_debug +galaxies=example_wds +model=effnet_rings_dirichlet  ++galaxies.n_samples=1
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/example_wds/predictions +model=effnet_rings_dirichlet +aggregation=example
 
@@ -98,3 +98,12 @@ Doesn't make sense to combine across models etc.
     python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/desi_wds/predictions +model=effnetb0_f128_desi_wds  +aggregation=desi
 
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/desi_wds/predictions +model=effnetb0_f128_desi_wds +aggregation=desi
+
+
+# DESI WDS Representations
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/desi_wds/representations +model=effnetb0_f128_desi_wds +aggregation=representations
+
+    python make_predictions/make_representations/to_friendly_table.py \
+        --hdf5-loc data/desi_wds/representations/desi_300px_f128_1gpu/grouped.hdf5 \
+        --save-loc data/desi_wds/representations/desi_300px_f128_1gpu/representations.parquet

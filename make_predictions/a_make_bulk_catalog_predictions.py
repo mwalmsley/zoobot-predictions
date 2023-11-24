@@ -5,9 +5,11 @@ import time
 import datetime
 
 import torch
+import pytorch_lightning as pl
 import pandas as pd
 import hydra
 from omegaconf import DictConfig
+import pytorch_lightning as pl
 
 from galaxy_datasets.shared import label_metadata
 from zoobot.pytorch.predictions import predict_on_catalog
@@ -160,25 +162,14 @@ class PredictWDS(PredictAbstract):
         })
 
     def load_shard_and_predict(self, this_batch_shard_locs, save_loc):
-
-        id_str_tuples = list(wds.WebDataset(this_batch_shard_locs, shardshuffle=False).to_tuple('__key__'))
-        # these are (id_str,) format, pick first element
-        image_id_strs = [x[0] for x in id_str_tuples]
-        # print(image_id_strs)
-        # exit()
-        
-        import pytorch_lightning as pl
         # from zoobot.pytorch.dataset
         trainer = pl.Trainer(max_epochs=-1, inference_mode=True, **self.trainer_kwargs)
         
         datamodule = webdatamodule.WebDataModule(
-            train_urls =this_batch_shard_locs,
             predict_urls=this_batch_shard_locs,
             label_cols=self.label_cols,
             **self.datamodule_kwargs
         )
-        # datamodule.setup('train')
-        # for (im, label) in datamodule.train_dataloader():
         datamodule.setup('predict')
         # for (im,) in datamodule.predict_dataloader():
         #     print(type(im))        
@@ -201,6 +192,43 @@ class PredictWDS(PredictAbstract):
             dim=-1).numpy()  # now stack on final dim for (galaxy, answer, dropout) shape
         logging.info('Predictions complete - {}'.format(predictions.shape))
 
+        # id_str_tuples = list(wds.WebDataset(
+        # this_batch_shard_locs, shardshuffle=False).to_tuple('__key__'))
+        # these are (id_str,) format, pick first element
+        # image_id_strs = [x[0] for x in id_str_tuples]
+        image_id_strs = []
+        id_str_datamodule = webdatamodule.WebDataModule(
+            predict_urls=this_batch_shard_locs,
+            label_cols=['id_str'],
+            **self.datamodule_kwargs
+        )
+        id_str_datamodule.setup('predict')
+
+        # temp
+        # temp_datamodule = webdatamodule.WebDataModule(
+        #     predict_urls=this_batch_shard_locs,
+        #     label_cols=self.label_cols,
+        #     **self.datamodule_kwargs
+        # )
+        # temp_datamodule.setup('predict')
+        # for (im_batch,) in temp_datamodule.predict_dataloader():
+        #     print(im_batch.shape)
+        #     im = im_batch[0]
+        #     import matplotlib.pyplot as plt
+        #     import numpy as np
+        #     plt.imshow(np.transpose(im.numpy(), (1,2,0)))
+        #     plt.show()
+        #     break
+        
+        for (id_str_batch,) in id_str_datamodule.predict_dataloader():
+            # print(id_str_batch[0])
+            # exit()
+            image_id_strs.append(id_str_batch)
+
+        logging.info('Expecting id strs: {} e.g. {}',format(len(image_id_strs), image_id_strs[0]))
+
+        assert len(image_id_strs) == len(predictions), ((this_batch_shard_locs, len(image_id_strs), len(predictions)))
+
         logging.info(f'Saving predictions to {save_loc}')
         save_predictions.predictions_to_hdf5(predictions, image_id_strs, self.label_cols, save_loc)
 
@@ -209,6 +237,8 @@ class PredictWDS(PredictAbstract):
 # https://hydra.cc/docs/tutorials/basic/your_first_app/config_groups/
 @hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
+
+    pl.seed_everything(1)
 
     if config.galaxies.format == 'jpg':
         predicter = PredictSnippets(config)
