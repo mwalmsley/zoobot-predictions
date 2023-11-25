@@ -221,11 +221,17 @@ class PredictWDS(PredictAbstract):
         #     break
         
         for (id_str_batch,) in id_str_datamodule.predict_dataloader():
+            
+            # print(id_str_batch)
+            # print(type(id_str_batch))
             # print(id_str_batch[0])
+            # print(type(id_str_batch[0]))
             # exit()
-            image_id_strs.append(id_str_batch)
+            image_id_strs += id_str_batch
 
-        logging.info('Expecting id strs: {} e.g. {}',format(len(image_id_strs), image_id_strs[0]))
+        # print(image_id_strs)
+        # print(image_id_strs[0])
+        logging.info(f'Expecting id strs: {len(image_id_strs)} e.g. {image_id_strs[0]}')
 
         assert len(image_id_strs) == len(predictions), ((this_batch_shard_locs, len(image_id_strs), len(predictions)))
 
