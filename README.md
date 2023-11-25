@@ -106,4 +106,5 @@ Doesn't make sense to combine across models etc.
 
     python make_predictions/make_representations/to_friendly_table.py \
         --hdf5-loc data/desi_wds/representations/desi_300px_f128_1gpu/grouped.hdf5 \
-        --save-loc data/desi_wds/representations/desi_300px_f128_1gpu/representations.parquet
+        --save-loc data/desi_wds/representations/desi_300px_f128_1gpu/representations.parquet \
+        --subset-frac 0.5
