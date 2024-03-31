@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--components', dest='components', type=int, default=100)
     args = parser.parse_args()
 
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
     # TODO dict
     if 'effnet' in args.parquet_loc:
@@ -26,9 +27,9 @@ if __name__ == '__main__':
     else:
         raise ValueError('Unknown model in parquet_loc')
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
     full_df = pd.read_parquet(args.parquet_loc)
+    logging.info('Raw representations loaded')
     # debug mode
     # full_df = full_df.sample(5000)
 

@@ -10,7 +10,7 @@ pwd; hostname; date
 # PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
 PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
-COMPONENTS=30
+COMPONENTS=40
 
 # CHECKPOINT_NAME=evo_py_gr_eff_224_814
 # CHECKPOINT_NAME=evo_py_gr_vittiny_224_19505
@@ -27,4 +27,5 @@ SAVE_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}/representations_pca_${COMPONENTS}
 
 $PYTHON $REPO_DIR/make_predictions/make_representations/pca_table.py \
     --parquet-loc $PARQUET_LOC \
-    --save-loc $SAVE_LOC
+    --save-loc $SAVE_LOC \
+    --components $COMPONENTS

@@ -4,11 +4,8 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --time=00:30:0  
-#SBATCH --array=0-0
-
-# SBATCH --time=01:30:0  
-# SBATCH --array=0-12%10
+#SBATCH --time=02:30:0  
+#SBATCH --array=0-12
 
 pwd; hostname; date
 
@@ -19,17 +16,17 @@ PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 export NCCL_BLOCKING_WAIT=1
 
-# POSSIBLE_START_SNIPPETS=( $(seq 0 400 3600 ) )
-# POSSIBLE_END_SNIPPETS=( $(seq 400 400 4000 ) )
+POSSIBLE_START_SNIPPETS=( $(seq 0 400 3600 ) )
+POSSIBLE_END_SNIPPETS=( $(seq 400 400 4000 ) )
 
-# START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-# echo Using start snippet $START_SNIPPET_INDEX
+START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+echo Using start snippet $START_SNIPPET_INDEX
 
-# END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-# echo Using end snippet $END_SNIPPET_INDEX
+END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+echo Using end snippet $END_SNIPPET_INDEX
 
-START_SNIPPET_INDEX=0
-END_SNIPPET_INDEX=400
+# START_SNIPPET_INDEX=0
+# END_SNIPPET_INDEX=400
 
 # predictions or representations
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/representations
