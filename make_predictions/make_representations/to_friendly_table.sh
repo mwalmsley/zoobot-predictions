@@ -7,7 +7,8 @@
 
 pwd; hostname; date
 
-PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
+# PYTHON=/share/nas2/walml/miniconda3/envs/zoobot38_torch/bin/python
+PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 # CHECKPOINT_NAME=evo_py_gr_eff_224_814
 # CHECKPOINT_NAME=evo_py_gr_vittiny_224_19505
