@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --time=00:10:0  
+#SBATCH --time=00:30:0  
 #SBATCH --array=0-0
 
 # SBATCH --time=01:30:0  
@@ -31,6 +31,7 @@ export NCCL_BLOCKING_WAIT=1
 START_SNIPPET_INDEX=0
 END_SNIPPET_INDEX=400
 
+# predictions or representations
 PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/representations
 MODEL=convnext_nano_evo
 GALAXIES=desi_wds
