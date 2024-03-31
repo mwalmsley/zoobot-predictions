@@ -44,7 +44,7 @@ class PredictAbstract():
 
         if 'representations' in self.config.predictions_dir:
             logging.warning('representations mode - ignoring label_cols')
-            assert self.model.zoobot_class == 'ZoobotEncoder'
+            assert self.config.model.zoobot_class == 'ZoobotEncoder'
             self.label_cols = None  # Zoobot will fill with [feat_0, feat_1 etc]
         else:
             self.label_cols = getattr(label_metadata, self.config.model.label_cols_name)
