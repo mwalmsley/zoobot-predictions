@@ -126,7 +126,7 @@ class PredictSnippets(PredictAbstract):
     def __init__(self, config) -> None:
         super().__init__(config, shard_extension = 'csv')
         self.datamodule_kwargs.update({
-            'greyscale': not self.config.model.color
+            'greyscale': self.config.model.greyscale
         })
         
 
@@ -158,7 +158,7 @@ class PredictWDS(PredictAbstract):
     def __init__(self, config) -> None:
         super().__init__(config, shard_extension = 'tar')
         self.datamodule_kwargs.update({
-            'color': self.config.model.color
+            'greyscale': self.config.model.greyscale
         })
 
     def load_shard_and_predict(self, this_batch_shard_locs, save_loc):

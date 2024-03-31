@@ -1,11 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=desi-pred                    # Job name
 #SBATCH --output=desi-pred_%A_%a.log 
-#SBATCH --time=01:30:0  
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu 4G
 #SBATCH --gres=gpu:v100:1
-#SBATCH --array=1-12%10
+#SBATCH --time=00:10:0  
+#SBATCH --array=0-0
+
+#SBATCH --time=01:30:0  
+#SBATCH --array=0-12%10
 
 pwd; hostname; date
 
@@ -16,17 +19,20 @@ PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 
 export NCCL_BLOCKING_WAIT=1
 
-POSSIBLE_START_SNIPPETS=( $(seq -400 400 3600 ) )
-POSSIBLE_END_SNIPPETS=( $(seq 0 400 4000 ) )
+# POSSIBLE_START_SNIPPETS=( $(seq 0 400 3600 ) )
+# POSSIBLE_END_SNIPPETS=( $(seq 400 400 4000 ) )
 
-START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-echo Using start snippet $START_SNIPPET_INDEX
+# START_SNIPPET_INDEX=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+# echo Using start snippet $START_SNIPPET_INDEX
 
-END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-echo Using end snippet $END_SNIPPET_INDEX
+# END_SNIPPET_INDEX=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+# echo Using end snippet $END_SNIPPET_INDEX
 
-PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/predictions
-MODEL=effnetb0_f128_desi_wds
+START_SNIPPET_INDEX=0
+END_SNIPPET_INDEX=400
+
+PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/representations
+MODEL=convnext_nano_evo
 GALAXIES=desi_wds
 
 srun $PYTHON /project/def-bovy/walml/repos/zoobot-predictions/make_predictions/a_make_bulk_catalog_predictions.py \

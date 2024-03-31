@@ -5,7 +5,6 @@ import torch
 
 from zoobot.pytorch.estimators import define_model
 from zoobot.pytorch.training import finetune
-from zoobot.shared import schemas
 
 
 def get_zoobot_model_to_use(config):
@@ -19,30 +18,25 @@ def get_zoobot_model_to_use(config):
     logging.info('Returning model from checkpoint: {}'.format(config.model.checkpoint_loc))  # automatically has all the hparams saved e.g. image size
 
     if config.model.zoobot_class == 'ZoobotTree':
+        # can't just load encoder from HF, need full lightning checkpoint
         model = define_model.ZoobotTree.load_from_checkpoint(config.model.checkpoint_loc, map_location=map_location)
-    
+    elif config.model.zoobot_class == 'ZoobotEncoder':
+        logging.warning('Loading encoder only, for representations')
+        from zoobot.pytorch.training import representations 
+        model = representations.ZoobotEncoder.load_from_name(config.model.encoder_name)
     # for these two, we need to specify the location of the original encoder checkpoint
     # even though the weights of the original encoder are never used, it means we can remake the same encoder *architecture*
     # if you are making on predictions on the same system you did the finetuning on, 
     # this isn't necessary as pytorch lightning records where the encoder checkpoint is - but best to be explicit
     elif config.model.zoobot_class == 'FinetuneableZoobotClassifier':
-        assert config.model.encoder_loc is not None
-        model = finetune.FinetuneableZoobotClassifier.load_from_checkpoint(config.model.checkpoint_loc, checkpoint_loc=config.model.encoder_loc)
+        model = finetune.FinetuneableZoobotClassifier.load_from_name(config.model.encoder_name)
     elif config.model.zoobot_class == 'FinetuneableZoobotTree':
-        assert config.model.encoder_loc is not None
-        schema = getattr(schemas, config.model.schema_name)
-        model = finetune.FinetuneableZoobotTree.load_from_checkpoint(
-            config.model.checkpoint_loc, checkpoint_loc=config.model.encoder_loc, schema=schema)
+        model = finetune.FinetuneableZoobotTree.load_from_name(config.model.encoder_name)
+    
     else:
         raise ValueError(config.model.zoobot_class)
     
-    if 'representations' in config.predictions_dir:
-        logging.warning('Loading encoder only, for representations')
-        from zoobot.pytorch.training import representations 
-        encoder = representations.ZoobotEncoder(model.encoder, pyramid=False)
-        return encoder
-    else:
-        return model        
+    return model        
         
-def get_model_name(checkpoint_loc):
-    return os.path.basename(os.path.dirname(os.path.dirname(checkpoint_loc)))
+# def get_model_name(checkpoint_loc):
+#     return os.path.basename(os.path.dirname(os.path.dirname(checkpoint_loc)))

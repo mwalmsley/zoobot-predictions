@@ -1,0 +1,14 @@
+model_name: convnext_nano_evo
+zoobot_class: ZoobotEncoder
+# TODO needs moving to beluga
+# checkpoint_loc: '/project/def-bovy/walml/repos/zoobot-foundation/foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_nano_rep1_div1_seed1530/checkpoints/epoch=31-step=15360.ckpt'
+encoder_name: hf_hub:mwalmsley/zoobot-encoder-convnext_nano
+label_cols_name: decals_all_campaigns_ortho_label_cols
+schema_name: decals_all_campaigns_ortho_schema
+greyscale: False
+resize_after_crop: 224
+crop_scale_bounds: [0.75, 0.85]
+crop_ratio_bounds: [0.9, 1.1]
+
+      #  'convnext_nano': repo_dir / 'foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_nano_rep1_div1_seed1530/checkpoints/epoch=31-step=15360.ckpt',
+      #  'convnext_large': repo_dir / 'foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_large_rep1_div1_seed960/checkpoints/epoch=13-step=53760.ckpt'
