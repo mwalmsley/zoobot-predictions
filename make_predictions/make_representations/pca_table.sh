@@ -23,6 +23,8 @@ PREDICTIONS_DIR=/project/def-bovy/walml/repos/zoobot-predictions/data/desi_wds/r
 PARQUET_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}_representations.parquet
 SAVE_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}_representations_pca_${COMPONENTS}.parquet
 
-$PYTHON /share/nas2/walml/repos/desi-predictions/make_predictions/representations/pca_table.py \
+REPO_DIR=/project/def-bovy/walml/repos/zoobot-predictions
+
+$PYTHON $REPO_DIR/representations/pca_table.py \
     --parquet-loc $PARQUET_LOC \
     --save-loc $SAVE_LOC
