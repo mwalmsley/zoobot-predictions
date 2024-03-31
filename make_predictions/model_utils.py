@@ -15,9 +15,8 @@ def get_zoobot_model_to_use(config):
         logging.info('Forcing model to load on CPU')
         map_location = torch.device('cpu')
 
-    logging.info('Returning model from checkpoint: {}'.format(config.model.checkpoint_loc))  # automatically has all the hparams saved e.g. image size
-
     if config.model.zoobot_class == 'ZoobotTree':
+        logging.info('Returning model from checkpoint: {}'.format(config.model.checkpoint_loc))  # automatically has all the hparams saved e.g. image size
         # can't just load encoder from HF, need full lightning checkpoint
         model = define_model.ZoobotTree.load_from_checkpoint(config.model.checkpoint_loc, map_location=map_location)
     elif config.model.zoobot_class == 'ZoobotEncoder':
