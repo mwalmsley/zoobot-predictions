@@ -3,7 +3,7 @@
 #SBATCH --output=desi-pred_%A_%a.log 
 #SBATCH --time=02:30:0  
 #SBATCH --cpus-per-task=5
-#SBATCH --mem-per-cpu 10G
+#SBATCH --mem 10G
 # no gpu etc
 
 pwd; hostname; date

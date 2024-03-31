@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=pca                    # Job name
 #SBATCH --output=pca_%A.log 
-#SBATCH --time=1:00:00
-#SBATCH --cpus-per-task=5
-#SBATCH --mem-per-cpu 10G
+#SBATCH --time=2:00:00
+#SBATCH --cpus-per-task=20
+#SBATCH --mem 170G  # crank
 
 pwd; hostname; date
 
