@@ -25,6 +25,6 @@ SAVE_LOC=${PREDICTIONS_DIR}/${CHECKPOINT_NAME}_representations_pca_${COMPONENTS}
 
 REPO_DIR=/project/def-bovy/walml/repos/zoobot-predictions
 
-$PYTHON $REPO_DIR/representations/pca_table.py \
+$PYTHON $REPO_DIR/make_predictions/make_representations/pca_table.py \
     --parquet-loc $PARQUET_LOC \
     --save-loc $SAVE_LOC

@@ -16,10 +16,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
+    # TODO dict
     if 'effnet' in args.parquet_loc:
         REPRESENTATION_DIM = 1280
-    else:
+    elif 'convnext_nano' in args.parquet_loc:
+        REPRESENTATION_DIM = 640
+    elif 'maxvit' in args.parquet_loc:
         REPRESENTATION_DIM = 512
+    else:
+        raise ValueError('Unknown model in parquet_loc')
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
