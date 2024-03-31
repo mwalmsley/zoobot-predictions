@@ -7,8 +7,8 @@
 #SBATCH --time=00:10:0  
 #SBATCH --array=0-0
 
-#SBATCH --time=01:30:0  
-#SBATCH --array=0-12%10
+# SBATCH --time=01:30:0  
+# SBATCH --array=0-12%10
 
 pwd; hostname; date
 
