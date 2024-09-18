@@ -2,6 +2,7 @@ subset_loc: ''
 shard_dir: /media/user/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/v4_post_euclid_challenge
 n_samples: 2
 format: 'jpg'
+label_cols_name: 'euclid_ortho_label_cols'
 
 # /usr/miniforge3/envs/pytorch/bin/python 
 # use this interpreter for CUDA L4 GPU on datalabs
