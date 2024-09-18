@@ -1,5 +1,5 @@
 subset_loc: ''
-shard_dir: /media/user/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/v4_post_euclid_challenge
+shard_dir: /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/snippets
 n_samples: 2
 format: 'jpg'
 
