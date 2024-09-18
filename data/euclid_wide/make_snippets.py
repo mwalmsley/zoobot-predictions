@@ -6,6 +6,7 @@ import pandas as pd
 # set of CSVs, each with file_loc and id_str columns
 
 def get_id_str(galaxy):
+    # TODO NEG part, like pipeline
     return f'{galaxy["release_name"]}_{galaxy["tile_index"]}_{galaxy["object_id"]}'
 
 

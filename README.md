@@ -113,7 +113,10 @@ Doesn't make sense to combine across models etc.
 
     python data/euclid_wide/make_snippets.py 
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/hsc_pdr3/predictions +cluster=local_debug +galaxies=hsc_pdr3 +model=effnet_rings_dirichlet
+    conda activate pytorch
+    conda activate /usr/miniforge3/envs/pytorch
+
+    /usr/miniforge3/envs/pytorch/bin/python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_euclid
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
 

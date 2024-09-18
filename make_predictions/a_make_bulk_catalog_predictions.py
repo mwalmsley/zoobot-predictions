@@ -14,7 +14,7 @@ import pytorch_lightning as pl
 from galaxy_datasets.shared import label_metadata
 from zoobot.pytorch.predictions import predict_on_catalog
 # this will use whatatever the default datamodule uses for predict transforms
-from zoobot.pytorch.datasets import webdatamodule
+from galaxy_datasets.pytorch import webdatamodule
 from zoobot.shared import save_predictions
 
 import webdataset as wds
