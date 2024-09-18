@@ -6,7 +6,7 @@ import pandas as pd
 # set of CSVs, each with file_loc and id_str columns
 
 def get_id_str(galaxy):
-    return f'{galaxy["release_name"]}_{galaxy["tile_id"]}_{galaxy["object_id"]}'
+    return f'{galaxy["release_name"]}_{galaxy["tile_index"]}_{galaxy["object_id"]}'
 
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     tile_catalog_locs = glob.glob(catalog_dir + '/*_mer_catalog.csv')
     for loc in tile_catalog_locs:
-        df = pd.read_csv(loc, usecols=['release_name', 'tile_id', 'object_id', 'jpg_loc_composite'])
+        df = pd.read_csv(loc, usecols=['release_name', 'tile_index', 'object_id', 'jpg_loc_composite'])
         df['file_loc'] = df['jpg_loc_composite'] # .apply(lambda x: f'{image_dir}/{x}.png')
         df['id_str'] = df.apply(get_id_str, axis=1)
         df = df.sort_values('id_str')
