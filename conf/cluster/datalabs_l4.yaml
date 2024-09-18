@@ -1,0 +1,10 @@
+start_shard_index: 0
+end_shard_index: 10000
+task_id: 42
+shards_per_node_batch: 10 
+overwrite: False
+batch_size: 64  # we'll see on L4
+num_workers: 1
+devices: 1
+accelerator: gpu
+precision: '16-mixed'

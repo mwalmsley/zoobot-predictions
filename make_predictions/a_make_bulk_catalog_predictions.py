@@ -13,6 +13,7 @@ import pytorch_lightning as pl
 
 from galaxy_datasets.shared import label_metadata
 from zoobot.pytorch.predictions import predict_on_catalog
+# this will use whatatever the default datamodule uses for predict transforms
 from zoobot.pytorch.datasets import webdatamodule
 from zoobot.shared import save_predictions
 
@@ -55,6 +56,7 @@ class PredictAbstract():
             'batch_size': self.config.cluster.batch_size, 
             'num_workers': self.config.cluster.num_workers,
             # these aug params vary by model
+            # WARNING crop bounds will do nothing now, as I changed the default augs?
             'crop_scale_bounds': self.config.model.crop_scale_bounds,
             'crop_ratio_bounds': self.config.model.crop_ratio_bounds,
             'resize_after_crop': self.config.model.resize_after_crop,
@@ -244,6 +246,14 @@ class PredictWDS(PredictAbstract):
 # https://hydra.cc/docs/tutorials/basic/your_first_app/config_groups/
 @hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
+
+    import sys
+    sys.path.insert(0,'/media/user/repos/zoobot')
+    sys.path.insert(0,'/media/user/repos/galaxy-datasets')
+    # currently, galaxy-datasets still uses (by default) albumentations for transforms when FT on Euclid
+    # https://github.com/mwalmsley/euclid-morphology/blob/main/finetune.py#L93
+    # https://github.com/mwalmsley/galaxy-datasets/blob/main/galaxy_datasets/pytorch/galaxy_datamodule.py#L112
+    # so should remain consistent here, life is easy
 
     pl.seed_everything(1)
 
