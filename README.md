@@ -108,3 +108,15 @@ Doesn't make sense to combine across models etc.
         --hdf5-loc data/desi_wds/representations/desi_300px_f128_1gpu/grouped.hdf5 \
         --save-loc data/desi_wds/representations/desi_300px_f128_1gpu/representations.parquet \
         --subset-frac 0.5
+
+### Euclid Predictions
+
+    python data/euclid_wide/make_snippets.py 
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/hsc_pdr3/predictions +cluster=local_debug +galaxies=hsc_pdr3 +model=effnet_rings_dirichlet
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet  +aggregation=local_debug
+
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
