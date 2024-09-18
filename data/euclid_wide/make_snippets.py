@@ -1,6 +1,7 @@
 import os
 import glob
 
+import tqdm
 import pandas as pd
 
 # set of CSVs, each with file_loc and id_str columns
@@ -22,9 +23,11 @@ if __name__ == '__main__':
     assert os.path.exists(snippet_dir), f'{snippet_dir} does not exist'
 
     tile_catalog_locs = glob.glob(catalog_dir + '/*_mer_catalog.csv')
-    for loc in tile_catalog_locs:
+    for loc in tqdm.tqdm(tile_catalog_locs):
         df = pd.read_csv(loc, usecols=['release_name', 'tile_index', 'object_id', 'jpg_loc_composite'])
         df['file_loc'] = df['jpg_loc_composite'] # .apply(lambda x: f'{image_dir}/{x}.png')
         df['id_str'] = df.apply(get_id_str, axis=1)
+        df['file_exists'] = df['file_loc'].apply(os.path.exists)
+        df = df.query('file_exists')
         df = df.sort_values('id_str')
         df.to_csv(os.path.join(snippet_dir, os.path.basename(loc)), index=False)
