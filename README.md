@@ -116,10 +116,10 @@ Doesn't make sense to combine across models etc.
     conda activate pytorch
     conda activate /usr/miniforge3/envs/pytorch
 
-    /usr/miniforge3/envs/pytorch/bin/python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_euclid
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_euclid
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet  +aggregation=local_debug
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
 
-    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
