@@ -113,7 +113,7 @@ Doesn't make sense to combine across models etc.
 
     python data/euclid_wide/make_snippets.py 
 
-    conda activate pytorch
+    <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
     conda activate /usr/miniforge3/envs/pytorch
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_euclid
