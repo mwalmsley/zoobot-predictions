@@ -1,7 +1,8 @@
 model_name: convnext_nano_euclid
 zoobot_class: FinetuneableZoobotTree
 finetuned_hub_name: 'mwalmsley/zoobot-finetuned-euclid'
-label_cols_name: 'euclid_ortho_label_cols'
+label_cols_name: 'euclid_label_cols'  # names for predicted columns
+schema_name: 'euclid_schema'  # used for final d_ script
 greyscale: False
 resize_after_crop: 224
 crop_scale_bounds: [0.75, 0.85]
