@@ -4,7 +4,7 @@ end_shard_index: 5000
 task_id: 42
 shards_per_node_batch: 50 
 overwrite: False
-batch_size: 128   # nano, 24gb mem on L4
+batch_size: 1024   # nano, 24gb mem on L4
 num_workers: 8  # loads of cores :) but "too many open files error" observed at 32, trying 16 now. Error every 300ish shards.
 devices: 1
 accelerator: gpu
