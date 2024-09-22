@@ -88,7 +88,7 @@ Doesn't make sense to combine across models etc.
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/hsc_pdr3/predictions +model=effnet_rings_dirichlet +aggregation=local_debug
 
 
-### WDS DESI Predictions
+### WDS DESI Predictions (slurm)
 
     # run on slurm, see a_make_bulk_catalog_predictions.sh
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/desi_wds/predictions +cluster=beluga +galaxies=desi_wds +model=effnetb0_f128_desi_wds
@@ -100,7 +100,7 @@ Doesn't make sense to combine across models etc.
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=data/desi_wds/predictions +model=effnetb0_f128_desi_wds +aggregation=desi
 
 
-# DESI WDS Representations
+### DESI WDS Representations
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/desi_wds/representations +model=effnetb0_f128_desi_wds +aggregation=representations
 
@@ -108,3 +108,24 @@ Doesn't make sense to combine across models etc.
         --hdf5-loc data/desi_wds/representations/desi_300px_f128_1gpu/grouped.hdf5 \
         --save-loc data/desi_wds/representations/desi_300px_f128_1gpu/representations.parquet \
         --subset-frac 0.5
+
+### Euclid Karina (strong lens candidates) Predictions
+
+    python data/euclid_karina/make_snippets.py
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/euclid_karina/predictions +cluster=local_gpu +galaxies=euclid_karina_jpg +model=convnext_nano_evo
+
+### Euclid Karina (strong lens candidates) Representations
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/euclid_karina/representations +cluster=local_gpu +galaxies=euclid_karina_jpg +model=convnext_nano_evo ++config.model.zoobot_class=ZoobotEncoder
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=data/euclid_karina/representations +model=convnext_nano_evo +aggregation=representations
+
+    python make_predictions/make_representations/to_friendly_table.py \
+        --hdf5-loc data/euclid_karina/representations/convnext_nano_evo/grouped.hdf5 \
+        --save-loc data/euclid_karina/representations/convnext_nano_evo/representations.parquet
+
+    python make_predictions/make_representations/pca_table.py \
+    --parquet-loc data/euclid_karina/representations/convnext_nano_evo/representations.parquet \
+    --save-loc data/euclid_karina/representations/convnext_nano_evo/representations_pca_20.parquet \
+    --components 20

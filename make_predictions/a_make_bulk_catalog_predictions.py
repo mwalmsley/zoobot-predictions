@@ -12,8 +12,8 @@ from omegaconf import DictConfig
 import pytorch_lightning as pl
 
 from galaxy_datasets.shared import label_metadata
+from galaxy_datasets.pytorch import webdatamodule
 from zoobot.pytorch.predictions import predict_on_catalog
-from zoobot.pytorch.datasets import webdatamodule
 from zoobot.shared import save_predictions
 
 import webdataset as wds
@@ -31,13 +31,6 @@ class PredictAbstract():
             
         if not os.path.isdir(self.config.predictions_dir):
             os.mkdir(self.config.predictions_dir)
-
-        if self.config.galaxies.subset_loc != '':
-            self.subset_df = pd.read_parquet(self.config.galaxies.subset_loc, columns=['file_loc'])
-            logging.info('Will filter galaxies to those with file_loc in {} ({}, e.g. {})'.format(self.config.galaxies.subset_loc, len(self.subset_df), self.subset_df.iloc[0]['file_loc']))
-        else:
-            logging.info('No subset loc provided, not filtering galaxies beyond those included in snippets')
-            self.subset_df = None
 
         logging.info('Loading Zoobot model')
         self.model = model_utils.get_zoobot_model_to_use(self.config)
@@ -129,6 +122,14 @@ class PredictSnippets(PredictAbstract):
         self.datamodule_kwargs.update({
             'greyscale': self.config.model.greyscale
         })
+
+        if self.config.galaxies.subset_loc != '':
+            self.subset_df = pd.read_parquet(self.config.galaxies.subset_loc, columns=['file_loc'])
+            logging.info('Will filter galaxies to those with file_loc in {} ({}, e.g. {})'.format(self.config.galaxies.subset_loc, len(self.subset_df), self.subset_df.iloc[0]['file_loc']))
+        else:
+            logging.info('No subset loc provided, not filtering galaxies beyond those included in snippets')
+            self.subset_df = None
+
         
 
     def load_shard_and_predict(self, this_batch_shard_locs, save_loc):
