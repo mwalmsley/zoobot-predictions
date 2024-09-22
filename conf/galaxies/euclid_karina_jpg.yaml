@@ -1,0 +1,5 @@
+subset_loc: ''
+shard_dir: data/euclid_karina/snippets
+n_samples: 1
+question_suffix: '-cd' # we don't have any -euclid suffix models ready yet, needs finetuning, could add soon
+format: 'jpg'
