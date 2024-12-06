@@ -1,0 +1,7 @@
+subset_loc: ''
+shard_dir: /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/snippets
+n_samples: 2
+format: 'jpg'
+
+# /usr/miniforge3/envs/pytorch/bin/python 
+# use this interpreter for CUDA L4 GPU on datalabs

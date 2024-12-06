@@ -113,29 +113,20 @@ Doesn't make sense to combine across models etc.
 
     python data/euclid_wide/make_snippets.py 
 
+    TARGET=euclid_q1
+    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/predictions
+
     <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
     conda activate /usr/miniforge3/envs/pytorch
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_euclid
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$TARGET +model=convnext_nano_euclid
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=$PREDICTIONS_DIR +model=convnext_nano_euclid +aggregation=euclid
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=$PREDICTIONS_DIR +model=convnext_nano_euclid +aggregation=euclid
 
-    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/predictions +model=convnext_nano_euclid +aggregation=euclid_wide
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=$PREDICTIONS_DIR +model=convnext_nano_euclid +aggregation=euclid
 
-
-    File "/home/mwalms01/.local/lib/python3.10/site-packages/pytorch_lightning/utilities/combined_loader.py", line 155, in __iter__
-    File "/home/mwalms01/.local/lib/python3.10/site-packages/pytorch_lightning/utilities/combined_loader.py", line 173, in _load_current_iterator
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 435, in __iter__
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 388, in _get_iterator
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1020, in __init__
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/multiprocessing/context.py", line 103, in Queue
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/multiprocessing/queues.py", line 43, in __init__
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/multiprocessing/context.py", line 68, in Lock
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/multiprocessing/synchronize.py", line 162, in __init__
-    File "/usr/miniforge3/envs/pytorch/lib/python3.10/multiprocessing/synchronize.py", line 57, in __init__
-    OSError: [Errno 24] Too many open files    
 
 ### Euclid Representations - Evo model without Euclid (i.e. not affected by the linear FT)
 
@@ -143,7 +134,7 @@ Doesn't make sense to combine across models etc.
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=convnext_nano_evo +aggregation=representations
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=convnext_nano_evo +aggregation=euclid_wide
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=convnext_nano_evo +aggregation=euclid
 
     python make_predictions/make_representations/to_friendly_table.py \
         --hdf5-loc /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/grouped_across_models.hdf5 \
