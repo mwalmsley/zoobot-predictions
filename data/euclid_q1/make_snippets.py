@@ -16,8 +16,9 @@ if __name__ == '__main__':
     # we start with the per-tile catalogs as snippets, and set the 'file_loc' column to the colour image location
     # not adapting for relative folders as this runs on datalabs
 
-    catalog_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/pipeline_runs/v4_post_euclid_challenge/catalogs'
-    snippet_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/snippets'
+    catalog_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/pipeline_runs/v5_q1/catalogs'
+    snippet_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/snippets'
+
 
     assert os.path.exists(catalog_dir), f'{catalog_dir} does not exist'
     assert os.path.exists(snippet_dir), f'{snippet_dir} does not exist'

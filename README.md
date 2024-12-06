@@ -18,7 +18,7 @@ To manage the configuration (paths, model options, etc) I use [hydra](https://hy
 
 ## Install
 
-Requires Zoobot (any version, but must match the version for which the model was trained) and hydra/webdataset. `pip install -r requirements.txt`.
+Requires Zoobot (any version, but must match the version for which the model was trained) and hydra/webdataset. `pip install -r requirements.txt`, or manually see `conda.yaml`. Don't forget `pip install -e ../zoobot` (or similar) to install Zoobot.
 
 `zoobot-predictions` is not itself a package, just some folders with code.
 
@@ -111,13 +111,15 @@ Doesn't make sense to combine across models etc.
 
 ### Euclid Predictions
 
-    python data/euclid_wide/make_snippets.py 
+    <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
+    conda activate /usr/miniforge3/envs/pytorch
 
     TARGET=euclid_q1
     PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/predictions
 
-    <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
-    conda activate /usr/miniforge3/envs/pytorch
+    python data/$TARGET/make_snippets.py 
+
+
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$TARGET +model=convnext_nano_euclid
 
