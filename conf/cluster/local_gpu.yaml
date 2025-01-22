@@ -1,0 +1,10 @@
+start_shard_index: 0
+end_shard_index: 1000  # exclusive
+task_id: 42
+shards_per_node_batch: 1000
+overwrite: True
+batch_size: 64
+num_workers: 12
+devices: auto
+accelerator: gpu
+precision: '32'
