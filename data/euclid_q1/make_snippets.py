@@ -1,5 +1,6 @@
 import os
 import glob
+import logging
 
 import tqdm
 import pandas as pd
@@ -26,11 +27,16 @@ if __name__ == '__main__':
     tile_catalog_locs = glob.glob(catalog_dir + '/*_mer_catalog.csv')
     for loc in tqdm.tqdm(tile_catalog_locs):
         df = pd.read_csv(loc, usecols=['release_name', 'tile_index', 'object_id', 'jpg_loc_generic'])
+        if len(df) == 0:
+            logging.warning(f'Empty file {loc}')
+            continue
         df['file_loc'] = df['jpg_loc_generic'].str.replace('generic', 'gz_arcsinh_vis_y') # .apply(lambda x: f'{image_dir}/{x}.png')
         df['id_str'] = df.apply(get_id_str, axis=1)
         df['file_exists'] = df['file_loc'].apply(os.path.exists)
         print(df['file_loc'].iloc[0])
         df = df.query('file_exists')
-        assert len(df) > 0, f'No files found for {loc}'
+        if len(df) == 0:
+            logging.warning(f'No files found for {loc}')
+            continue
         df = df.sort_values('id_str')
         df.to_csv(os.path.join(snippet_dir, os.path.basename(loc)), index=False)
