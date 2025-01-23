@@ -114,7 +114,9 @@ Doesn't make sense to combine across models etc.
     <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
     conda activate /usr/miniforge3/envs/pytorch
 
-    pandas pytorch_lightning timm albumentations
+    pip install pandas pytorch_lightning timm albumentations
+
+    cd /media/home/my_workspace/repos/zoobot-predictions
     pip install -e ../galaxy-datasets
 
     TARGET=euclid_q1

@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # we start with the per-tile catalogs as snippets, and set the 'file_loc' column to the colour image location
     # not adapting for relative folders as this runs on datalabs
 
-    catalog_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/pipeline_runs/v5_q1/catalogs'
+    catalog_dir = 'team_workspaces/Euclid-Consortium/data/galaxy_zoo_euclid/v5_q1/mer_catalog_random_tiles_q1_full_gz/catalogs'
     snippet_dir = '/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/snippets'
 
 
