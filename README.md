@@ -120,14 +120,15 @@ Doesn't make sense to combine across models etc.
     pip install -e ../galaxy-datasets
     pip install -e ../zoobot
 
-    TARGET=euclid_q1
-    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/predictions
+    GALAXIES=euclid_q1
+    PIPELINE_NAME=v5_q1
+    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/$PIPELINE_NAME/predictions
 
-    python data/$TARGET/make_snippets.py 
+    python data/$GALAXIES/make_snippets.py 
 
 
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$TARGET +model=convnext_nano_euclid
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$GALAXIES +model=convnext_nano_euclid
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=$PREDICTIONS_DIR +model=convnext_nano_euclid +aggregation=euclid
 
@@ -138,6 +139,18 @@ Doesn't make sense to combine across models etc.
 
 ### Euclid Representations
 
+
+For Q1:
+
+    GALAXIES=euclid_q1
+    PIPELINE_NAME=v5_q1
+
+For Wide:
+
+    GALAXIES=TODO
+    PIPELINE_NAME=TODO
+
+
 Evo model without Euclid (i.e. not affected by the linear FT)
 
     MODEL=convnext_nano_evo
@@ -146,23 +159,26 @@ Euclid 5-layer finetune from GZ Evo V2 (itself including Euclid) (recommended)
 
     MODEL=convnext_nano_evo_v2_then_euclid
 
-
 and run
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +cluster=datalabs_l4 +galaxies=euclid_wide +model=$MODEL ++config.model.zoobot_class=ZoobotEncoder
+    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/$PIPELINE_NAME/representations
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=$MODEL +aggregation=representations
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$TARGET +model=$MODEL ++config.model.zoobot_class=ZoobotEncoder
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=$MODEL +aggregation=euclid
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=representations
+
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=euclid
 
     python make_predictions/make_representations/to_friendly_table.py \
-        --hdf5-loc /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/grouped_across_models.hdf5 \
-        --save-loc /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/representations.parquet
+        --hdf5-loc $PREDICTIONS_DIR/grouped_across_models.hdf5 \
+        --save-loc $PREDICTIONS_DIR/representations.parquet
+
+    N_COMPONENTS=40
 
     python make_predictions/make_representations/pca_table.py \
-        --parquet-loc /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/representations.parquet \
-        --save-loc  /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/representations_pca_40.parquet \
-        --components 40
+        --parquet-loc $PREDICTIONS_DIR/representations.parquet \
+        --save-loc  $PREDICTIONS_DIR/representations_pca_${N_COMPONENTS}.parquet \
+        --components $N_COMPONENTS
 
 ### Euclid Karina (strong lens candidates) Predictions
 
@@ -171,6 +187,8 @@ and run
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/euclid_karina/predictions +cluster=local_gpu +galaxies=euclid_karina_jpg +model=convnext_nano_evo
 
 ### Euclid Karina (strong lens candidates) Representations
+
+Used by Junbo and Khalid
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=data/euclid_karina/representations +cluster=local_gpu +galaxies=euclid_karina_jpg +model=convnext_nano_evo ++config.model.zoobot_class=ZoobotEncoder
 
