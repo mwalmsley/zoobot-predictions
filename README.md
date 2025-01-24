@@ -114,10 +114,11 @@ Doesn't make sense to combine across models etc.
     <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
     conda activate /usr/miniforge3/envs/pytorch
 
-    pip install pandas pytorch_lightning timm albumentations
+    pip install pandas pytorch_lightning timm albumentations==1.4.24 hydra-core webdataset pyro-ppl
 
     cd /media/home/my_workspace/repos/zoobot-predictions
     pip install -e ../galaxy-datasets
+    pip install -e ../zoobot
 
     TARGET=euclid_q1
     PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v5_q1/predictions
@@ -135,13 +136,24 @@ Doesn't make sense to combine across models etc.
     python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=$PREDICTIONS_DIR +model=convnext_nano_euclid +aggregation=euclid
 
 
-### Euclid Representations - Evo model without Euclid (i.e. not affected by the linear FT)
+### Euclid Representations
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +cluster=datalabs_l4 +galaxies=euclid_wide +model=convnext_nano_evo ++config.model.zoobot_class=ZoobotEncoder
+Evo model without Euclid (i.e. not affected by the linear FT)
 
-    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=convnext_nano_evo +aggregation=representations
+    MODEL=convnext_nano_evo
 
-    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=convnext_nano_evo +aggregation=euclid
+Euclid 5-layer finetune from GZ Evo V2 (itself including Euclid) (recommended)
+
+    MODEL=convnext_nano_evo_v2_then_euclid
+
+
+and run
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +cluster=datalabs_l4 +galaxies=euclid_wide +model=$MODEL ++config.model.zoobot_class=ZoobotEncoder
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=$MODEL +aggregation=representations
+
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations +model=$MODEL +aggregation=euclid
 
     python make_predictions/make_representations/to_friendly_table.py \
         --hdf5-loc /media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/v4_post_euclid_challenge/representations/grouped_across_models.hdf5 \

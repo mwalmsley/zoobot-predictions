@@ -1,0 +1,9 @@
+model_name: convnext_nano_evo_v2_then_euclid
+zoobot_class: ZoobotEncoder
+encoder_name: hf_hub:mwalmsley/zoobot-encoder-euclid
+# label_cols_name: gz_evo_v1_label_cols
+# schema_name: gz_evo_v1_schema
+greyscale: False
+resize_after_crop: 224
+crop_scale_bounds: [0.75, 0.85]
+crop_ratio_bounds: [0.9, 1.1]
