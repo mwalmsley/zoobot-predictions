@@ -111,7 +111,8 @@ Doesn't make sense to combine across models etc.
 
 ### Euclid Predictions
 
-    <!-- conda activate pytorch (doesn't show up in the list for some reason so instead...) -->
+`conda activate pytorch` doesn't show up in the list for some reason so instead...
+
     conda activate /usr/miniforge3/envs/pytorch
 
     pip install pandas pytorch_lightning timm albumentations==1.4.24 hydra-core webdataset pyro-ppl
@@ -121,12 +122,15 @@ Doesn't make sense to combine across models etc.
     pip install -e ../zoobot
 
     GALAXIES=euclid_q1
-    PIPELINE_NAME=v5_q1
-    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/$PIPELINE_NAME/predictions
+
+Manually update the paths in this script
 
     python data/$GALAXIES/make_snippets.py 
 
+Now you're ready for predictions
 
+    PIPELINE_NAME=q1_v6
+    PREDICTIONS_DIR=/media/team_workspaces/Galaxy-Zoo-Euclid/data/zoobot/predictions/$PIPELINE_NAME/predictions
 
     python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=datalabs_l4 +galaxies=$GALAXIES +model=convnext_nano_euclid
 
@@ -143,7 +147,7 @@ Doesn't make sense to combine across models etc.
 For Q1:
 
     GALAXIES=euclid_q1
-    PIPELINE_NAME=v5_q1
+    PIPELINE_NAME=q1_v6
 
 For Wide:
 
@@ -173,7 +177,7 @@ and run
         --hdf5-loc $PREDICTIONS_DIR/grouped_across_models.hdf5 \
         --save-loc $PREDICTIONS_DIR/representations.parquet
 
-    N_COMPONENTS=40
+    N_COMPONENTS=100
 
     python make_predictions/make_representations/pca_table.py \
         --parquet-loc $PREDICTIONS_DIR/representations.parquet \
