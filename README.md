@@ -7,7 +7,7 @@ Predictions are simple enough with lightning and galaxy-datasets, but it's fiddl
 
 The approach is:
 
-- Divide the galaxy catalog into ordered subsets (snippets), each with relatively few galaxies (not crucial, say 10k). See `make_hsc_snippets.py`
+- Divide the galaxy catalog into ordered subsets (snippets), each with relatively few galaxies (not crucial, say 10k). See `make_hsc_snippets.py`. Each snippet needs a `file_loc` and `id_str` column.
 - Assign each node to make single-model predictions on a few of those snippets. This is done by using a slurm task array to provide each node with different snippet indexes (e.g. snippets 0-5, snippets 6-10, etc) to make predictions on.  See `a_make_bulk_catalog_predictions.sh`
 - Predictions by one model on each snippet are saved as hdf5 arrays, with shape (galaxy_in_snippet, question, forward pass). See `a_make_bulk_catalog_predictions.py`
 - Group all the predictions by one model on every snippet into a single hdf5 file with shape (galaxy, question, forward pass). See `b_group_hdf5_from_a_model.py`
@@ -206,3 +206,24 @@ Used by Junbo and Khalid
     --parquet-loc data/euclid_karina/representations/convnext_nano_evo/representations.parquet \
     --save-loc data/euclid_karina/representations/convnext_nano_evo/representations_pca_20.parquet \
     --components 20
+
+
+## Sienna Galaxy Atlas predictions
+
+    GALAXIES=sga2020
+
+    python data/$GALAXIES/make_snippets.py 
+
+Now you're ready for predictions
+
+    PIPELINE_NAME=sga2020
+    PREDICTIONS_DIR=/home/walml/repos/zoobot-predictions/data/sga2020/predictions
+    MODEL=convnext_nano_evo
+
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=local_debug +galaxies=$GALAXIES +model=$MODEL
+
+    python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=desi
+
+    python make_predictions/c_group_hdf5_across_models.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=desi
+
+    python make_predictions/d_all_predictions_to_friendly_table.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=desi

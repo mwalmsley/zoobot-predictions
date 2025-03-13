@@ -1,0 +1,5 @@
+subset_loc: ''
+shard_dir: /home/walml/repos/zoobot-predictions/data/sga2020/snippets
+n_samples: 1
+question_suffix: '-dr8'
+format: 'jpg'

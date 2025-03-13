@@ -40,6 +40,7 @@ class PredictAbstract():
             assert self.config.model.zoobot_class == 'ZoobotEncoder'
             self.label_cols = None  # Zoobot will fill with [feat_0, feat_1 etc]
         else:
+            logging.info('Loading label cols: {}'.format(self.config.model.label_cols_name))
             self.label_cols = getattr(label_metadata, self.config.model.label_cols_name)
             logging.info(f'{len(self.label_cols)} label cols')
 
