@@ -218,9 +218,9 @@ Now you're ready for predictions
 
     PIPELINE_NAME=sga2020
     PREDICTIONS_DIR=/home/walml/repos/zoobot-predictions/data/sga2020/predictions
-    MODEL=convnext_nano_evo
+    MODEL=convnext_base_evo
 
-    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=local_debug +galaxies=$GALAXIES +model=$MODEL
+    python make_predictions/a_make_bulk_catalog_predictions.py +predictions_dir=$PREDICTIONS_DIR +cluster=local_gpu +galaxies=$GALAXIES +model=$MODEL
 
     python make_predictions/b_group_hdf5_from_a_model.py +predictions_dir=$PREDICTIONS_DIR +model=$MODEL +aggregation=desi
 
