@@ -40,17 +40,19 @@ class PredictAbstract():
             assert self.config.model.zoobot_class == 'ZoobotEncoder'
             self.label_cols = None  # Zoobot will fill with [feat_0, feat_1 etc]
         else:
+            logging.info('Loading label cols: {}'.format(self.config.model.label_cols_name))
             self.label_cols = getattr(label_metadata, self.config.model.label_cols_name)
             logging.info(f'{len(self.label_cols)} label cols')
 
         self.datamodule_kwargs = {
             # these are cluster params, model doesn't care but hardware does
             'batch_size': self.config.cluster.batch_size, 
-            'num_workers': self.config.cluster.num_workers,
+            'num_workers': self.config.cluster.num_workers
             # these aug params vary by model
-            'crop_scale_bounds': self.config.model.crop_scale_bounds,
-            'crop_ratio_bounds': self.config.model.crop_ratio_bounds,
-            'resize_after_crop': self.config.model.resize_after_crop,
+            # WARNING crop bounds will do nothing now, as I changed the default augs
+            # 'crop_scale_bounds': self.config.model.crop_scale_bounds,
+            # 'crop_ratio_bounds': self.config.model.crop_ratio_bounds,
+            # 'resize_after_crop': self.config.model.resize_after_crop,
         }
         self.trainer_kwargs = {
             'devices': self.config.cluster.devices,
@@ -119,9 +121,6 @@ class PredictAbstract():
 class PredictSnippets(PredictAbstract):
     def __init__(self, config) -> None:
         super().__init__(config, shard_extension = 'csv')
-        self.datamodule_kwargs.update({
-            'greyscale': self.config.model.greyscale
-        })
 
         if self.config.galaxies.subset_loc != '':
             self.subset_df = pd.read_parquet(self.config.galaxies.subset_loc, columns=['file_loc'])
@@ -147,9 +146,15 @@ class PredictSnippets(PredictAbstract):
 
 
     def predict_on_snippet(self, df, save_loc):
+
+        # assume this is a transform already in galaxy-datasets
+        from galaxy_datasets import transforms
+        inference_transform_config = getattr(transforms, self.config.model.inference_transform_config)()  # call to create the transform config
+        inference_transform = transforms.GalaxyViewTransform(inference_transform_config).transform  # call to create the transform
         # assert config.cluster.shards_per_node_batch >= config.cluster.batch_size  # otherwise we 
         predict_on_catalog.predict(
             df, self.model, self.config.galaxies.n_samples, self.label_cols, save_loc,
+            inference_transform=inference_transform,
             datamodule_kwargs=self.datamodule_kwargs,
             trainer_kwargs=self.trainer_kwargs
         )
@@ -188,7 +193,7 @@ class PredictWDS(PredictAbstract):
             [   
                 # trainer.predict gives [(galaxy, answer), ...] list, batchwise
                 # concat batches
-                torch.concat(trainer.predict(self.model, datamodule), dim=0)
+                torch.concat(trainer.predict(self.model, datamodule), dim=0)  # type: ignore
                 for _ in range(self.config.galaxies.n_samples)
             ], 
             dim=-1).numpy()  # now stack on final dim for (galaxy, answer, dropout) shape
@@ -245,6 +250,14 @@ class PredictWDS(PredictAbstract):
 # https://hydra.cc/docs/tutorials/basic/your_first_app/config_groups/
 @hydra.main(version_base=None, config_path="../conf", config_name='default')
 def main(config: DictConfig):
+
+    import sys
+    sys.path.insert(0,'/media/user/repos/zoobot')
+    sys.path.insert(0,'/media/user/repos/galaxy-datasets')
+    # currently, galaxy-datasets still uses (by default) albumentations for transforms when FT on Euclid
+    # https://github.com/mwalmsley/euclid-morphology/blob/main/finetune.py#L93
+    # https://github.com/mwalmsley/galaxy-datasets/blob/main/galaxy_datasets/pytorch/galaxy_datamodule.py#L112
+    # so should remain consistent here, life is easy
 
     pl.seed_everything(1)
 

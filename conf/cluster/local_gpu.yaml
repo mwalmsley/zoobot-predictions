@@ -3,7 +3,7 @@ end_shard_index: 1000  # exclusive
 task_id: 42
 shards_per_node_batch: 1000
 overwrite: True
-batch_size: 64
+batch_size: 32  # may need to tinker
 num_workers: 12
 devices: auto
 accelerator: gpu

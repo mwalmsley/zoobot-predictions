@@ -37,9 +37,7 @@ def main(config: DictConfig):
     else:
         debug = config.aggregation.debug
 
-    # schema = getattr(schemas, config.model.schema_name)\
-    from zoobot.shared import schemas
-    schema = schemas.decals_dr8_ortho_schema
+    schema = getattr(schemas, config.model.schema_name)
     
     grouped_across_models_loc = os.path.join(config.predictions_dir, 'grouped_across_models.hdf5')
     

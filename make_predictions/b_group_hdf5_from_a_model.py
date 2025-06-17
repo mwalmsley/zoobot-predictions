@@ -25,6 +25,7 @@ def main(config: DictConfig):
     # will have been concatenated across locs
     assert not any(galaxy_id_df['id_str'].duplicated()), galaxy_id_df['id_str'].value_counts()  # we don't expect any duplicate predictions
     assert len(galaxy_id_df) == len(predictions), (len(galaxy_id_df), len(predictions))
+    assert len(label_cols) == predictions.shape[1], (len(label_cols), predictions.shape[1])
     logging.info('All predictions loaded')
 
     # write to hdf5, re-using the save_predictions func
