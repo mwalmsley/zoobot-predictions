@@ -1,4 +1,4 @@
-model_name: convnext_base
+model_name: convnext_base_evo
 zoobot_class: ZoobotEncoder
 # TODO needs moving to beluga
 # checkpoint_loc: '/project/def-bovy/walml/repos/zoobot-foundation/foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_nano_rep1_div1_seed1530/checkpoints/epoch=31-step=15360.ckpt'
