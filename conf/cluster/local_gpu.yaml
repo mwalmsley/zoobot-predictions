@@ -3,8 +3,8 @@ end_shard_index: 1000  # exclusive
 task_id: 42
 shards_per_node_batch: 1000
 overwrite: True
-batch_size: 32  # may need to tinker
+batch_size: 32  # may need to tinker. 16 or 32 for convnext_base
 num_workers: 12
 devices: auto
 accelerator: gpu
-precision: '32'
+precision: '32'  # much quicker than 32, when gpu doesn't support 16 properly

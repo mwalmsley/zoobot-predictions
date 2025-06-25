@@ -33,6 +33,12 @@ def get_zoobot_model_to_use(config):
         model = finetune.FinetuneableZoobotClassifier.load_from_name(config.model.finetuned_hub_name)
     elif config.model.zoobot_class == 'FinetuneableZoobotTree':
         model = finetune.FinetuneableZoobotTree.load_from_name(config.model.finetuned_hub_name)
+    elif config.model.zoobot_class == 'RegressionBaseline':  # trained with gz-evo repo, lightning checkpoint
+        # add repo dir to path
+        import sys
+        sys.path.append('/home/walml/repos/gz-evo')
+        from gz_evo.core.baseline_models import RegressionBaseline
+        model = RegressionBaseline.load_from_checkpoint(config.model.checkpoint_loc)
     
     else:
         raise ValueError(config.model.zoobot_class)

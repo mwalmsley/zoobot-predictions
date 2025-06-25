@@ -1,11 +1,6 @@
 model_name: convnext_base
-zoobot_class: ZoobotEncoder
-# TODO needs moving to beluga
-# checkpoint_loc: '/project/def-bovy/walml/repos/zoobot-foundation/foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_nano_rep1_div1_seed1530/checkpoints/epoch=31-step=15360.ckpt'
-encoder_name: hf_hub:mwalmsley/baseline-encoder-regression-convnext_base
+zoobot_class: RegressionBaseline
+checkpoint_loc: /home/walml/The University of Manchester Dropbox/Mike Walmsley/gz-evo/baselines/regression/convnext_base_534895718_1749068729/checkpoints/RegressionBaseline.ckpt
 label_cols_name: gz_evo_v1_label_cols
 schema_name: gz_evo_v1_schema
 inference_transform_config: minimal_view_config  # galaxy_datasets.transforms.minimal_view_config
-
-      #  'convnext_nano': repo_dir / 'foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_nano_rep1_div1_seed1530/checkpoints/epoch=31-step=15360.ckpt',
-      #  'convnext_large': repo_dir / 'foundation/narval/submit_experiments_v14/gz-evo_300px_convnext_large_rep1_div1_seed960/checkpoints/epoch=13-step=53760.ckpt'

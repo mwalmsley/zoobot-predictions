@@ -102,7 +102,8 @@ class PredictAbstract():
                         pass  # race condition where another node tries to make it at the same instant
                 # will be named like the FIRST shard in this shard batch
                 # all galaxies in the shard batch will be included, not just the first - don't worry!
-                save_name = os.path.basename(this_batch_shard_locs[0]).replace(f'.{self.shard_extension}', f'_preds.hdf5')
+                # now a csv
+                save_name = os.path.basename(this_batch_shard_locs[0]).replace(f'.{self.shard_extension}', f'_preds.csv')
                 save_loc = os.path.join(subfolder, save_name)
 
                 if os.path.isfile(save_loc) and not self.config.cluster.overwrite:
