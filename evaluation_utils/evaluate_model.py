@@ -36,7 +36,9 @@ def standard_error(x):
 
 def print_metrics(question, label_df, predicted_fractions, schema, min_responses:int, style='human'):
 
-    y_true, y_pred = get_binary_responses(question, label_df, predicted_fractions, schema, min_responses)
+    y_true, y_pred = get_integer_responses(question, label_df, predicted_fractions, schema, min_responses)
+
+    # print(pd.value_counts(y_true, sort=False))
 
     # how to handle multi-class metrics - see https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
     # average = 'micro'  # "Calculate metrics globally by counting the total true positives, false negatives and false positives.""
@@ -51,19 +53,20 @@ def print_metrics(question, label_df, predicted_fractions, schema, min_responses
             question.text
         ))
     elif style == 'latex':
+        # questions count accuracy precision recall f1
         print('{} & {} & {:.4f} & {:.4f} & {:.4f} & {:.4f} \\\\'.format(
             question.text.replace('-', ' ').replace('_', ' ').title(),
             len(y_true),
             metrics.accuracy_score(y_true, y_pred),
-            0,
-            metrics.precision_score(y_true, y_pred, average=average),
-            metrics.recall_score(y_true, y_pred, average=average),
-            0,
-            metrics.f1_score(y_true, y_pred, average=average)
+            # 0,
+            metrics.precision_score(y_true, y_pred, average=average, zero_division=np.nan),
+            metrics.recall_score(y_true, y_pred, average=average, zero_division=np.nan),
+            # 0,
+            metrics.f1_score(y_true, y_pred, average=average, zero_division=np.nan)
         ))
 
 
-def get_binary_responses(question: schemas.Question, label_df: pd.DataFrame, predicted_fractions: np.array, schema: schemas.Schema, min_responses: int):
+def get_integer_responses(question: schemas.Question, label_df: pd.DataFrame, predicted_fractions: np.array, schema: schemas.Schema, min_responses: int):
     """
     Turn actual/predicted answer fractions into actual/predicted binary responses.
 
@@ -95,7 +98,7 @@ def get_binary_responses(question: schemas.Question, label_df: pd.DataFrame, pre
 
 
 def show_confusion_matrix(question, label_df, predicted_fractions, schema, min_responses:int, ax=None, blank_yticks=False, add_title=False, normalize=None):
-    y_true, y_pred = get_binary_responses(question, label_df, predicted_fractions, schema, min_responses)
+    y_true, y_pred = get_integer_responses(question, label_df, predicted_fractions, schema, min_responses)
     
     labels = range(len(question.answers))
 
