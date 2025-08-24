@@ -24,11 +24,6 @@ def get_zoobot_model_to_use(config):
         from zoobot.pytorch.training import representations 
         model = representations.ZoobotEncoder.load_from_name(config.model.encoder_name)
     # for finetuned models
-    # BELOW NO LONGER TRUE
-    # , we need to specify the location of the original encoder checkpoint
-    # even though the weights of the original encoder are never used, it means we can remake the same encoder *architecture*
-    # if you are making on predictions on the same system you did the finetuning on, 
-    # this isn't necessary as pytorch lightning records where the encoder checkpoint is - but best to be explicit
     elif config.model.zoobot_class == 'FinetuneableZoobotClassifier':
         model = finetune.FinetuneableZoobotClassifier.load_from_name(config.model.finetuned_hub_name)
     elif config.model.zoobot_class == 'FinetuneableZoobotTree':

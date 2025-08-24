@@ -113,6 +113,8 @@ Doesn't make sense to combine across models etc.
 
 ### Euclid Predictions
 
+This is designed to run on Datalabs, avoiding the need to download images (or upload them to HuggingFace). This uses a single GPU and no slurm commands.
+
 `conda activate pytorch` doesn't show up in the list for some reason so instead...
 
     conda activate /usr/miniforge3/envs/pytorch
@@ -163,7 +165,7 @@ Evo model without Euclid (i.e. not affected by the linear FT)
 
 Euclid 5-layer finetune from GZ Evo V2 (itself including Euclid) (recommended)
 
-    MODEL=convnext_nano_evo_v2_then_euclid
+MODEL=convnext_nano_evo_v2_then_euclid
 
 and run
 
