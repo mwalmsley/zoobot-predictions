@@ -17,6 +17,12 @@
 
 # generalised from foundation/export/mae_features.py
 
+
+# for datalabs
+# conda activate gpu
+# pip install timm datasets lightning hydra-core scikit-learn
+# pip install -e galaxy-datasets/.
+
 from dataclasses import dataclass, field
 from typing import Generator, Optional
 
@@ -32,10 +38,11 @@ from galaxy_datasets.pytorch.galaxy_datamodule import HuggingFaceDataModule
 from galaxy_datasets.transforms import default_view_config, get_galaxy_transform
 
 
+# https://hydra.cc/docs/tutorials/structured_config/hierarchical_static_config/
 @dataclass
 class DatasetConfig:
     dataset_name: str = "mwalmsley/gz_euclid"
-    split_name: str = "tiny"
+    config_name: str = "default"
     max_items: Optional[int] = None
 
 @dataclass
@@ -43,16 +50,17 @@ class ModelConfig:
     model_name: str = "hf_hub:mwalmsley/euclid_encoder_mae_zoobot_vit_small_patch8_224"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
-        "a100": 64
+        "a100": 1028,
+        "l4": 1028
     })
     indices_to_use: list = field(default_factory=lambda: [0, 9, 10, 11])  # which layers to extract features from
 
 @dataclass
 class HardwareConfig:
     accelerator: str = "gpu"
-    gpu: str = 'a100'
-    num_workers: int = 4  # per device
-    prefetch_factor: int = 4  # per device
+    gpu: str = 'l4'
+    num_workers: int = 1  # per device
+    prefetch_factor: int = 2  # per device
 
 @dataclass
 class MyConfig:
@@ -81,7 +89,7 @@ def setup(cfg, split):
 
     model = timm.create_model(cfg.model.model_name, pretrained=cfg.model.pretrained)
 
-    dataset_dict: hf_datasets.DatasetDict = hf_datasets.load_dataset(cfg.dataset.dataset_name, cfg.dataset.split_name)  # type: ignore
+    dataset_dict: hf_datasets.DatasetDict = hf_datasets.load_dataset(cfg.dataset.dataset_name, cfg.dataset.config_name)  # type: ignore
 
     dataset_dict['predict'] = dataset_dict.pop(split)
     if cfg.dataset.max_items is not None:
@@ -111,51 +119,101 @@ def setup(cfg, split):
 
 def generate_features(cfg, split) -> Generator[dict, None, None]:  # yield type, send type, return type
     model, datamodule = setup(cfg, split)
+    model.to('cuda')
+    model.eval()
     datamodule.setup('predict')
     for batch in datamodule.predict_dataloader():
+        batch = {k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
         features = get_features(batch, model, indices_to_use=cfg.model.indices_to_use)
-        yield features
+        for f in features:
+            yield f  # dict for single galaxy
 
 # should work for any timm model
-def get_features(batch, model, indices_to_use) -> dict:
+def get_features(batch, model, indices_to_use, to_cpu=True) -> dict:
     images = batch['image']  # [b, 3, h, w]
     with torch.no_grad():
         intermediates = model.forward_intermediates(images, indices=indices_to_use, intermediates_only=True, norm=True)
-    features = {}
-    for i, intermediate in zip(indices_to_use, intermediates):
-        # if pool:  for now, always pool
-            # https://stackoverflow.com/questions/58692476/what-is-adaptive-average-pooling-and-how-does-it-work
-            # intermediate = torch.nn.functional.adaptive_avg_pool2d(intermediate, (1, 1))
-            # [b, hidden_d, p, p] -> [b, hidden_d]
-        intermediate = torch.mean(intermediate, dim=(-2, -1), keepdim=False)
-        features['pooled_features_block_{}'.format(i)] = intermediate  # type: ignore
-        features['id_str'] = batch['id_str']
-    return features  
-    # dict with keys, each key has features or id_str for this batch, stored as arr
-    # easy to convert to huggingface dataset
 
-# from hf_datasets.Split import NamedSplits
+    # concat to [n_int, batch, hidden, patch, patch]
+    intermediates = torch.stack(intermediates, dim=0)
+    # print(intermediates.shape)
+
+    # [n_int, batch, hidden]
+    pooled = torch.mean(intermediates, dim=(-2, -1), keepdim=False)
+    # print(pooled.shape)
+
+    if to_cpu:
+        pooled = pooled.cpu()
+        # id_str = id_str.cpu()
+
+    features = []
+    for galaxy_i, id_str in enumerate(batch['id_str']):
+        row_features = {'id_str': id_str}
+        for block_i, block_name in enumerate(indices_to_use):
+            row_features['pooled_features_block_{}'.format(block_name)] = pooled[block_i, galaxy_i]  # type: ignore
+        features.append(row_features)
+    
+    return features 
+    # list of dicts, each dict keyed by features, each value for one galaxy
+    # standard flat/huggingface format
+    
 
 @hydra.main(version_base=None, config_name="config")
 def main(cfg):
 
+    # detect datalabs, get token if so
+    if os.path.isdir('/media/home/my_workspace/_credentials'):
+        import json
+        with open('/media/home/my_workspace/_credentials/secrets.txt') as f:
+            token = json.load(f)['token']
+    else:
+        token = None
+
+    torch.cuda.empty_cache()
+
+    # debugging
     # gen = generate_features(cfg, split='train')
     # instance = next(gen)
+    # print(instance)
+    # print(instance[0])
+    # exit()
     # for k, v in instance.items():
     #     print(k, v, v.dtype)
+
+
+    from datasets.features import Value, List, Features
+    
+    features = Features({
+        'id_str': Value('string'),
+        'pooled_features_block_0': List(feature=Value('float32'), length=384),
+        'pooled_features_block_9': List(feature=Value('float32'), length=384),
+        'pooled_features_block_10': List(feature=Value('float32'), length=384),
+        'pooled_features_block_11': List(feature=Value('float32'), length=384),
+    })
+    print(features)
 
     ds_dict = {}
     for split in ['train', 'test']:
         # first split as arg to generator, second split names the output dataset split
-        ds = hf_datasets.Dataset.from_generator(generate_features, gen_kwargs={'cfg': cfg, 'split': split}, split=split)  # type: ignore
-        print(ds)
+        ds = hf_datasets.Dataset.from_generator(
+            generate_features, 
+            gen_kwargs={'cfg': cfg, 'split': split}, 
+            features=features,
+            split=split
+        )
+        # print(ds)
         ds_dict[split] = ds
     ds_dict = hf_datasets.DatasetDict(ds_dict)
-    print(ds_dict)
+    # print(ds_dict)
 
-    ds_dict.save_to_disk('euclid_tiny_representations')
+    # ds_dict.save_to_disk(f'datasets/{cfg.dataset.dataset_name}_{cfg.dataset.config_name}')
 
-    ds_dict.push_to_hub('mwalmsley/euclid_tiny_representations', private=True)
+    
+    ds_dict.push_to_hub(
+        f'{cfg.dataset.dataset_name}_embeddings',
+        config_name=cfg.dataset.config_name,
+        token=token,
+        private=False)
 
 
 if __name__ == '__main__':
