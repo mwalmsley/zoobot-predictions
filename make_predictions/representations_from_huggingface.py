@@ -97,6 +97,17 @@ class MAEConfig(ModelConfig):
     })
     indices_to_use: list = field(default_factory=lambda: [0, 9, 10, 11])  # which layers to extract features from
 
+@dataclass
+class EvoConvNextBaseConfig(ModelConfig):
+    # uploaded with gz_evo export to hub, must be full timm encoder
+    model_name: str = "hf_hub:mwalmsley/baseline-encoder-regression-convnext_base" 
+    pretrained: bool = True
+    batch_size: dict = field(default_factory=lambda: {
+        "a100": 1028,
+        "l4": 1028,
+        "t400": 2
+    })
+    indices_to_use: list = field(default_factory=lambda: [3])  # which layers to extract features from
 
 # hardware
 
@@ -135,11 +146,9 @@ cs.store(group="dataset", name="gz_euclid", node=DatasetGZEuclidConfig)
 cs.store(group="dataset", name="euclid_q1", node=DatasetQ1Config)
 cs.store(group="dataset", name="euclid_rr2", node=DatasetRR2Config)
 cs.store(group="model", name="mae", node=MAEConfig)
+cs.store(group="model", name="evo_convnext_base", node=EvoConvNextBaseConfig)
 cs.store(group="hardware", name="office", node=OfficeConfig)
 cs.store(group="hardware", name="datalabs", node=DatalabsConfig)
-
-
-
 
 
 # so timm knows about my custom model
@@ -199,6 +208,7 @@ def generate_features(cfg, split, token) -> Generator[dict, None, None]:  # yiel
         features = get_features(batch, model, indices_to_use=cfg.model.indices_to_use)
         for f in features:
             yield f  # dict for single galaxy
+
 
 # should work for any timm model
 def get_features(batch, model, indices_to_use, to_cpu=True) -> list[dict]:
@@ -279,7 +289,12 @@ def main(cfg):
     ds_dict = hf_datasets.DatasetDict(ds_dict)
     # print(ds_dict)
 
-    config_name = f'{cfg.dataset.dataset_name}_{cfg.dataset.config_name}_{cfg.model.model_name.replace("hf_hub:mwalmsley/", "")}'
+    safe_model_name = cfg.model.model_name.replace("hf_hub:mwalmsley/", "").replace("/", "_")
+    # safe_dataset_name = cfg.dataset.dataset_name.replace("mwalmsley/", "")
+    # config_name = f'{safe_dataset_name}_{cfg.dataset.config_name}_{safe_model_name}'
+    config_name = f'{cfg.dataset.config_name}___{safe_model_name}'
+    print(config_name)
+    exit()
 
     if on_datalabs:
         ds_dict.save_to_disk(f'datasets/' + config_name)
@@ -297,4 +312,5 @@ if __name__ == '__main__':
 
     """
     python make_predictions/representations_from_huggingface.py +dataset=debug +model=mae +hardware=office
+    python make_predictions/representations_from_huggingface.py +dataset=debug +model=evo_convnext_base +hardware=office
     """
