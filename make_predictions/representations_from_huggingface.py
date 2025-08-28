@@ -21,7 +21,10 @@
 # for datalabs
 # conda activate gpu
 # pip install timm datasets lightning hydra-core scikit-learn
-# pip install -e galaxy-datasets/.
+# pip install -e repos/galaxy-datasets/.
+# pip install --no-deps -e repos/galaxy-datasets/.
+
+# export HF_HOME=/media/home/team_workspaces/Galaxy-Zoo-Euclid/huggingface
 
 # from abc import ABC, abstractmethod
 import os
@@ -85,29 +88,45 @@ class ModelConfig:
     pretrained: bool
     batch_size: dict
     indices_to_use: list
+    embed_dim: int  # in principle, could be a list matching indices_to_use
 
 @dataclass
 class MAEConfig(ModelConfig):
     model_name: str = "hf_hub:mwalmsley/euclid_encoder_mae_zoobot_vit_small_patch8_224"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
-        "a100": 1028,
-        "l4": 1028,
+        "a100": 1024,
+        "l4": 1024,
         "t400": 2
     })
+    embed_dim: int = 384
     indices_to_use: list = field(default_factory=lambda: [0, 9, 10, 11])  # which layers to extract features from
 
 @dataclass
-class EvoConvNextBaseConfig(ModelConfig):
+class ConvNextBaseConfig(ModelConfig):
     # uploaded with gz_evo export to hub, must be full timm encoder
     model_name: str = "hf_hub:mwalmsley/baseline-encoder-regression-convnext_base" 
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
-        "a100": 1028,
-        "l4": 1028,
+        "a100": 512,
+        "l4": 512,
         "t400": 2
     })
-    indices_to_use: list = field(default_factory=lambda: [3])  # which layers to extract features from
+    embed_dim: int = 1024
+    indices_to_use: list = field(default_factory=lambda: [3])
+
+@dataclass
+class MaxViTBaseConfig(ModelConfig):
+    # uploaded with gz_evo export to hub, must be full timm encoder
+    model_name: str = "hf_hub:mwalmsley/zoobot-encoder-evo-maxvit_base" 
+    pretrained: bool = True
+    batch_size: dict = field(default_factory=lambda: {
+        "a100": 512,
+        "l4": 512,
+        "t400": 2
+    })
+    embed_dim: int = 768
+    indices_to_use: list = field(default_factory=lambda: [4])
 
 # hardware
 
@@ -141,12 +160,16 @@ class MyConfig:
 # https://hydra.cc/docs/tutorials/structured_config/config_groups/
 cs = ConfigStore.instance()
 cs.store(name="config", node=MyConfig)
+
 cs.store(group="dataset", name="debug", node=DatasetDebugConfig)
 cs.store(group="dataset", name="gz_euclid", node=DatasetGZEuclidConfig)
 cs.store(group="dataset", name="euclid_q1", node=DatasetQ1Config)
 cs.store(group="dataset", name="euclid_rr2", node=DatasetRR2Config)
+
 cs.store(group="model", name="mae", node=MAEConfig)
-cs.store(group="model", name="evo_convnext_base", node=EvoConvNextBaseConfig)
+cs.store(group="model", name="convnext_base", node=ConvNextBaseConfig)
+cs.store(group="model", name="maxvit_base", node=MaxViTBaseConfig)
+
 cs.store(group="hardware", name="office", node=OfficeConfig)
 cs.store(group="hardware", name="datalabs", node=DatalabsConfig)
 
@@ -202,6 +225,8 @@ def generate_features(cfg, split, token) -> Generator[dict, None, None]:  # yiel
     model, datamodule = setup(cfg, split, token)
     model.to('cuda')
     model.eval()
+    # https://docs.pytorch.org/tutorials/recipes/recipes/amp_recipe.html
+    # with torch.autocast(device_type=device, dtype=torch.float16): TODO if mixed precision needed
     datamodule.setup('predict')
     for batch in datamodule.predict_dataloader():
         batch = {k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
@@ -234,6 +259,7 @@ def get_features(batch, model, indices_to_use, to_cpu=True) -> list[dict]:
         row_features = {'id_str': id_str}
         for block_i, block_name in enumerate(indices_to_use):
             row_features['pooled_features_block_{}'.format(block_name)] = pooled[block_i, galaxy_i]  # type: ignore
+            # print(row_features['pooled_features_block_{}'.format(block_name)].shape)
         features.append(row_features)
     
     return features 
@@ -266,13 +292,13 @@ def main(cfg):
 
     from datasets.features import Value, List, Features
     
-    features = Features({
-        'id_str': Value('string'),
-        'pooled_features_block_0': List(feature=Value('float32'), length=384),
-        'pooled_features_block_9': List(feature=Value('float32'), length=384),
-        'pooled_features_block_10': List(feature=Value('float32'), length=384),
-        'pooled_features_block_11': List(feature=Value('float32'), length=384),
-    })
+    features_dict = {
+        'id_str': Value('string')
+    }
+    for index in cfg.model.indices_to_use:
+        features_dict[f'pooled_features_block_{index}'] = List(feature=Value('float32'), length=cfg.model.embed_dim)
+
+    features = Features(features_dict)
     print(features)
 
     ds_dict = {}
@@ -293,8 +319,8 @@ def main(cfg):
     # safe_dataset_name = cfg.dataset.dataset_name.replace("mwalmsley/", "")
     # config_name = f'{safe_dataset_name}_{cfg.dataset.config_name}_{safe_model_name}'
     config_name = f'{cfg.dataset.config_name}___{safe_model_name}'
-    print(config_name)
-    exit()
+    # print(config_name)
+    # exit()
 
     if on_datalabs:
         ds_dict.save_to_disk(f'datasets/' + config_name)
@@ -308,9 +334,34 @@ def main(cfg):
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+
+
+    # import timm
+    # model = timm.create_model('hf_hub:mwalmsley/baseline-encoder-regression-convnext_base', pretrained=True)
+    # print(model.num_features)
 
     """
     python make_predictions/representations_from_huggingface.py +dataset=debug +model=mae +hardware=office
-    python make_predictions/representations_from_huggingface.py +dataset=debug +model=evo_convnext_base +hardware=office
+    python make_predictions/representations_from_huggingface.py +dataset=debug +model=convnext_base +hardware=office
+
+    python make_predictions/representations_from_huggingface.py +dataset=debug +model=convnext_base +hardware=office ++model.model_name=hf_hub:mwalmsley/zoobot-encoder-euclid-convnext-base
+    python _representations_from_huggingface.py +dataset=euclid_q1 +model=convnext_base +hardware=datalabs ++model.model_name=hf_hub:mwalmsley/zoobot-encoder-euclid-convnext-base
+
+    python make_predictions/representations_from_huggingface.py +dataset=debug +model=maxvit_base +hardware=office ++model.model_name=hf_hub:mwalmsley/zoobot-encoder-euclid-maxvit-base
     """
+
+    # regression encoder = maxvit
+    # this was retrained using the new timm optimiser and did well
+    # local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch\=23-step\=12432.ckpt
+    # and excellent (best) gz euclid finetuned version
+    # r8zxu9aj
+    # neither are loaded/uploaded yet
+    # linear transfer wasn't quite as good as v4 convnext base, but fully finetuned was better
+
+    # regression encoder - convnext base
+    # above is the v4 best effort, evo only
+    # uploaded using the gz-evo encoder_to_hub script (so full timm encoder)
+    # gz euclid finetuned version is
+    # /share/nas2/walml/repos/zoobot-foundation/results/finetune/dnb_debug/ty2yh1qv/checkpoints/17.ckpt 
+    # not yet loaded/uploaded
