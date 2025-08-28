@@ -23,8 +23,11 @@
 # pip install timm datasets lightning hydra-core scikit-learn
 # pip install -e galaxy-datasets/.
 
+# from abc import ABC, abstractmethod
+import os
 from dataclasses import dataclass, field
-from typing import Generator, Optional
+from typing import Generator, Optional, Any
+import json
 
 import hydra
 # from hydra.utils import instantiate
@@ -39,37 +42,105 @@ from galaxy_datasets.transforms import default_view_config, get_galaxy_transform
 
 
 # https://hydra.cc/docs/tutorials/structured_config/hierarchical_static_config/
+
+from datasets import load_dataset
+
+# datasets
+
 @dataclass
 class DatasetConfig:
+    dataset_name: str
+    config_name: str
+    max_items: Optional[int] = None
+
+@dataclass
+class DatasetGZEuclidConfig(DatasetConfig):
     dataset_name: str = "mwalmsley/gz_euclid"
     config_name: str = "default"
     max_items: Optional[int] = None
 
 @dataclass
+class DatasetDebugConfig(DatasetConfig):
+    dataset_name: str = "mwalmsley/euclid_q1"
+    config_name: str = "tiny-v1-gz_arcsinh_vis_y"
+    max_items: Optional[int] = 64
+
+@dataclass
+class DatasetQ1Config(DatasetConfig):
+    dataset_name: str = "mwalmsley/euclid_q1"
+    config_name: str = "v1-gz_arcsinh_vis_y"
+    max_items: Optional[int] = None
+
+@dataclass
+class DatasetRR2Config(DatasetConfig):
+    dataset_name: str = "mwalmsley/euclid_rr2"
+    config_name: str = "v2"
+    max_items: Optional[int] = None
+
+# models
+
+@dataclass
 class ModelConfig:
+    model_name: str
+    pretrained: bool
+    batch_size: dict
+    indices_to_use: list
+
+@dataclass
+class MAEConfig(ModelConfig):
     model_name: str = "hf_hub:mwalmsley/euclid_encoder_mae_zoobot_vit_small_patch8_224"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 1028,
-        "l4": 1028
+        "l4": 1028,
+        "t400": 2
     })
     indices_to_use: list = field(default_factory=lambda: [0, 9, 10, 11])  # which layers to extract features from
 
+
+# hardware
+
 @dataclass
 class HardwareConfig:
+    accelerator: str
+    gpu: str
+    num_workers: int  # per device
+    prefetch_factor: int  # per device
+
+@dataclass
+class OfficeConfig(HardwareConfig):
+    accelerator: str = "gpu"
+    gpu: str = 't400'
+    num_workers: int = 1
+    prefetch_factor: int = 1
+
+@dataclass
+class DatalabsConfig(HardwareConfig):
     accelerator: str = "gpu"
     gpu: str = 'l4'
-    num_workers: int = 1  # per device
-    prefetch_factor: int = 2  # per device
+    num_workers: int = 1
+    prefetch_factor: int = 2
 
 @dataclass
 class MyConfig:
-    dataset: DatasetConfig = field(default_factory=DatasetConfig)
-    model: ModelConfig = field(default_factory=ModelConfig)
-    hardware: HardwareConfig = field(default_factory=HardwareConfig)
+    dataset: DatasetConfig
+    model: ModelConfig
+    hardware: HardwareConfig
 
+# https://hydra.cc/docs/tutorials/structured_config/config_groups/
 cs = ConfigStore.instance()
 cs.store(name="config", node=MyConfig)
+cs.store(group="dataset", name="debug", node=DatasetDebugConfig)
+cs.store(group="dataset", name="gz_euclid", node=DatasetGZEuclidConfig)
+cs.store(group="dataset", name="euclid_q1", node=DatasetQ1Config)
+cs.store(group="dataset", name="euclid_rr2", node=DatasetRR2Config)
+cs.store(group="model", name="mae", node=MAEConfig)
+cs.store(group="hardware", name="office", node=OfficeConfig)
+cs.store(group="hardware", name="datalabs", node=DatalabsConfig)
+
+
+
+
 
 # so timm knows about my custom model
 from timm.models import register_model
@@ -81,16 +152,17 @@ def zoobot_vit_small_patch8_224(pretrained: bool = False, **kwargs) -> VisionTra
         img_size=224,
         # from vit config
         patch_size=8, depth=12, num_heads=6, embed_dim=384, mlp_ratio=4, global_pool='avg', num_classes=0)
-    model = _create_vision_transformer('zoobot_vit_small_patch8_224', pretrained=pretrained, **dict(model_args, **kwargs))
+    model = _create_vision_transformer('zoobot_vit_small_patch8_224', pretrained=pretrained, **dict(model_args, **kwargs))  # type: ignore
     return model
 
+        
 
-def setup(cfg, split):
+def setup(cfg, split, token):
 
     model = timm.create_model(cfg.model.model_name, pretrained=cfg.model.pretrained)
 
-    dataset_dict: hf_datasets.DatasetDict = hf_datasets.load_dataset(cfg.dataset.dataset_name, cfg.dataset.config_name)  # type: ignore
 
+    dataset_dict: hf_datasets.DatasetDict = hf_datasets.load_dataset(cfg.dataset.dataset_name, cfg.dataset.config_name, token=token)  # type: ignore
     dataset_dict['predict'] = dataset_dict.pop(split)
     if cfg.dataset.max_items is not None:
             # don't exceed max items in dataset
@@ -117,8 +189,8 @@ def setup(cfg, split):
     return model, datamodule
 
 
-def generate_features(cfg, split) -> Generator[dict, None, None]:  # yield type, send type, return type
-    model, datamodule = setup(cfg, split)
+def generate_features(cfg, split, token) -> Generator[dict, None, None]:  # yield type, send type, return type
+    model, datamodule = setup(cfg, split, token)
     model.to('cuda')
     model.eval()
     datamodule.setup('predict')
@@ -129,22 +201,23 @@ def generate_features(cfg, split) -> Generator[dict, None, None]:  # yield type,
             yield f  # dict for single galaxy
 
 # should work for any timm model
-def get_features(batch, model, indices_to_use, to_cpu=True) -> dict:
+def get_features(batch, model, indices_to_use, to_cpu=True) -> list[dict]:
     images = batch['image']  # [b, 3, h, w]
     with torch.no_grad():
         intermediates = model.forward_intermediates(images, indices=indices_to_use, intermediates_only=True, norm=True)
 
-    # concat to [n_int, batch, hidden, patch, patch]
+    # concat to [block_index, batch, hidden], possibly also [patch, patch] for vit etc
     intermediates = torch.stack(intermediates, dim=0)
-    # print(intermediates.shape)
 
-    # [n_int, batch, hidden]
-    pooled = torch.mean(intermediates, dim=(-2, -1), keepdim=False)
-    # print(pooled.shape)
+    if intermediates.ndim == 5:
+        # yes, it has patch dims, pool them
+        pooled = torch.mean(intermediates, dim=(-2, -1), keepdim=False)
+    else:
+        # no patch dims, all is well
+        pooled = intermediates  # [block_index, batch, hidden]
 
     if to_cpu:
         pooled = pooled.cpu()
-        # id_str = id_str.cpu()
 
     features = []
     for galaxy_i, id_str in enumerate(batch['id_str']):
@@ -161,17 +234,17 @@ def get_features(batch, model, indices_to_use, to_cpu=True) -> dict:
 @hydra.main(version_base=None, config_name="config")
 def main(cfg):
 
-    # detect datalabs, get token if so
-    if os.path.isdir('/media/home/my_workspace/_credentials'):
-        import json
+    on_datalabs = os.path.isdir('/media/home/my_workspace')
+
+    # datalabs only, for token
+    if on_datalabs:
         with open('/media/home/my_workspace/_credentials/secrets.txt') as f:
             token = json.load(f)['token']
     else:
         token = None
 
-    torch.cuda.empty_cache()
+    # torch.cuda.empty_cache()
 
-    # debugging
     # gen = generate_features(cfg, split='train')
     # instance = next(gen)
     # print(instance)
@@ -197,24 +270,31 @@ def main(cfg):
         # first split as arg to generator, second split names the output dataset split
         ds = hf_datasets.Dataset.from_generator(
             generate_features, 
-            gen_kwargs={'cfg': cfg, 'split': split}, 
+            gen_kwargs={'cfg': cfg, 'split': split, 'token': token}, 
             features=features,
-            split=split
+            split=split  # type: ignore
         )
         # print(ds)
         ds_dict[split] = ds
     ds_dict = hf_datasets.DatasetDict(ds_dict)
     # print(ds_dict)
 
-    # ds_dict.save_to_disk(f'datasets/{cfg.dataset.dataset_name}_{cfg.dataset.config_name}')
+    config_name = f'{cfg.dataset.dataset_name}_{cfg.dataset.config_name}_{cfg.model.model_name.replace("hf_hub:mwalmsley/", "")}'
+
+    if on_datalabs:
+        ds_dict.save_to_disk(f'datasets/' + config_name)
 
     
     ds_dict.push_to_hub(
         f'{cfg.dataset.dataset_name}_embeddings',
-        config_name=cfg.dataset.config_name,
+        config_name=config_name,
         token=token,
         private=False)
 
 
 if __name__ == '__main__':
     main()
+
+    """
+    python make_predictions/representations_from_huggingface.py +dataset=debug +model=mae +hardware=office
+    """

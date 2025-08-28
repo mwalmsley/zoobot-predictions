@@ -178,3 +178,5 @@ lightning_logs/*
 *.tar.*
 *.tar
 *.npy
+
+settings.json
