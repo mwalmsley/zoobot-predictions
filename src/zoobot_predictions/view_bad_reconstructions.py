@@ -41,9 +41,12 @@ if __name__ == '__main__':
         masked = batch_preds['masked']
         reconstructed = batch_preds['reconstructed']
         reconstruction_error = batch_preds['reconstruction_error'].cpu().numpy()
-        print(np.percentile(reconstruction_error, [99, 99.5, 99.9, 100]))
-        exit()
-        worst_indices = np.argsort(-reconstruction_error)  # descending
+        # print(np.percentile(reconstruction_error, [99, 99.5, 99.9, 100]))
+        # exit()
+        min_error = 0.007
+
+        # worst_indices = np.argsort(-reconstruction_error)  # descending
+        worst_indices = [i for i in range(len(images)) if reconstruction_error[i] > min_error]
 
         fig = plt.figure(figsize=(5., n_images))
         grid = ImageGrid(fig, 111,  # similar to subplot(111)
