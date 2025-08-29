@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     for batch_loc in tqdm.tqdm(batch_locs):
         # batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
-        save_loc = batch_loc.replace('.pt', '_images.jpg')
+        save_loc = batch_loc.replace('.pt', '_worst.jpg')
         if os.path.isfile(save_loc):
             continue
 
