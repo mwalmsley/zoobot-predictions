@@ -26,7 +26,7 @@ if __name__ == '__main__':
     assert batch_locs, f'No predictions found in {prediction_dir}'
 
     for batch_loc in tqdm.tqdm(batch_locs):
-        batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
+        # batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
 
         batch_preds = torch.load(batch_loc)
         # print(batch_preds)
@@ -76,4 +76,4 @@ if __name__ == '__main__':
             # row[2].set_title(f'Reconstructed Image\nError: {reconstruction_error[i]:.4f}')
             row[2].axis('off')
 
-        fig.savefig(f'/home/walml/repos/zoobot-foundation/foundation/experiments/hybrid/{batch_index}_images.jpg')
+        fig.savefig(batch_loc.replace('.pt', '_images.jpg'))
