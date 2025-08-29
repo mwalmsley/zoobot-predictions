@@ -41,7 +41,7 @@ if __name__ == '__main__':
         masked = batch_preds['masked']
         reconstructed = batch_preds['reconstructed']
         reconstruction_error = batch_preds['reconstruction_error']
-        worst_indices = np.argsort(-reconstruction_error)  # descending
+        worst_indices = np.argsort(-reconstruction_error.cpu().numpy())  # descending
 
         fig = plt.figure(figsize=(5., n_images))
         grid = ImageGrid(fig, 111,  # similar to subplot(111)
