@@ -27,6 +27,9 @@ if __name__ == '__main__':
 
     for batch_loc in tqdm.tqdm(batch_locs):
         # batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
+        save_loc = batch_loc.replace('.pt', '_images.jpg')
+        if os.path.isfile(save_loc):
+            continue
 
         batch_preds = torch.load(batch_loc)
         # print(batch_preds)
@@ -76,4 +79,6 @@ if __name__ == '__main__':
             # row[2].set_title(f'Reconstructed Image\nError: {reconstruction_error[i]:.4f}')
             row[2].axis('off')
 
-        fig.savefig(batch_loc.replace('.pt', '_images.jpg'))
+        fig.savefig(save_loc)
+        # close
+        plt.close(fig)
