@@ -47,6 +47,8 @@ if __name__ == '__main__':
 
         # worst_indices = np.argsort(-reconstruction_error)  # descending
         worst_indices = [i for i in range(len(images)) if reconstruction_error[i] > min_error]
+        if not worst_indices:
+            continue
 
         fig = plt.figure(figsize=(5., n_images))
         grid = ImageGrid(fig, 111,  # similar to subplot(111)
