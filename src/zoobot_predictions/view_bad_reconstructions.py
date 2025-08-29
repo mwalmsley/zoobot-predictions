@@ -14,9 +14,6 @@ import torch
 if __name__ == '__main__':
         
     torch.serialization.add_safe_globals([PIL.Image.Image])
-
-
-    n_images = 10
     
     on_datalabs = os.path.isdir('/media/home/my_workspace')
     if on_datalabs:
@@ -29,11 +26,17 @@ if __name__ == '__main__':
     batch_locs = glob.glob(f'{prediction_dir}/0/*.pt')
     assert batch_locs, f'No predictions found in {prediction_dir}'
 
+    bad_images = []
+    bad_masks = []
+    bad_reconstructions = []
+
+    save_loc = os.path.join(prediction_dir, '0', '_bad_reconstructions.jpg')
+
     for batch_loc in tqdm.tqdm(batch_locs):
         # batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
-        save_loc = batch_loc.replace('.pt', '_worst.jpg')
-        if os.path.isfile(save_loc):
-            continue
+ 
+        # if os.path.isfile(save_loc):
+        #     continue
 
         batch_preds = torch.load(batch_loc)
 
@@ -50,31 +53,37 @@ if __name__ == '__main__':
         if not worst_indices:
             continue
 
-        fig = plt.figure(figsize=(5., n_images))
-        grid = ImageGrid(fig, 111,  # similar to subplot(111)
-                        nrows_ncols=(n_images, 3),  # creates 2x2 grid of Axes
-                        axes_pad=0.05,  # pad between Axes in inch.
-                        )
+        bad_images.extend(images[worst_indices])
+        bad_masks.extend(masked[worst_indices])
+        bad_reconstructions.extend(reconstructed[worst_indices])
 
-        def get_rows(grid):
-            n_ax = len(grid) 
-            grid = iter(grid)
-            for _ in range(n_ax // 3):
-                yield [next(grid) for _ in range(3)]
+    n_images = len(bad_images)
 
-        for i, row in enumerate(get_rows(grid)):
+    fig = plt.figure(figsize=(5., n_images))
+    grid = ImageGrid(fig, 111,  # similar to subplot(111)
+                    nrows_ncols=(n_images, 3),  # creates 2x2 grid of Axes
+                    axes_pad=0.05,  # pad between Axes in inch.
+                    )
 
-            # put i in the lower corner
-            row[0].text(0.15, 0.1, str(i), ha='center', va='center', transform=row[0].transAxes, color='white', fontsize=8)
+    def get_rows(grid):
+        n_ax = len(grid) 
+        grid = iter(grid)
+        for _ in range(n_ax // 3):
+            yield [next(grid) for _ in range(3)]
 
-            row[0].imshow(images[worst_indices[i]])
-            row[0].axis('off')
+    for i, row in enumerate(get_rows(grid)):
 
-            row[1].imshow(masked[worst_indices[i]])
-            row[1].axis('off')
+        # put i in the lower corner
+        row[0].text(0.15, 0.1, str(i), ha='center', va='center', transform=row[0].transAxes, color='white', fontsize=8)
 
-            row[2].imshow(reconstructed[worst_indices[i]])
-            row[2].axis('off')
+        row[0].imshow(bad_images[i])
+        row[0].axis('off')
 
-        fig.savefig(save_loc)
-        plt.close(fig)
+        row[1].imshow(bad_masks[i])
+        row[1].axis('off')
+
+        row[2].imshow(bad_reconstructions[i])
+        row[2].axis('off')
+
+    fig.savefig(save_loc)
+    plt.close(fig)
