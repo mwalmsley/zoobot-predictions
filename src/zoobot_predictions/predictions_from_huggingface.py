@@ -65,5 +65,9 @@ if __name__ == '__main__':
     main()
 
     """
-    python zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=mae +hardware=home ++model.model_name="/home/walml/Dropbox (The University of Manchester)/euclid/euclid_morphology/models/u11vazbb/checkpoints/model.ckpt"
+    python zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=local_mae +hardware=home 
+    
+    python zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=local_mae +hardware=datalabs
     """
+
+    

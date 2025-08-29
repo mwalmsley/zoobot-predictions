@@ -75,7 +75,8 @@ class MAEConfig(ModelConfig):
 
 @dataclass
 class LocalMAEConfig(ModelConfig):
-    model_name: str = "/home/walml/Dropbox (The University of Manchester)/euclid/euclid_morphology/models/u11vazbb/checkpoints/model.ckpt"
+    # model_name: str = "/home/walml/Dropbox (The University of Manchester)/euclid/euclid_morphology/models/u11vazbb/checkpoints/model.ckpt"
+    model_name: str = "https://huggingface.co/mwalmsley/euclid-rr2-mae-lightning/resolve/main/model.ckpt"  # for datalabs
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 1024,
