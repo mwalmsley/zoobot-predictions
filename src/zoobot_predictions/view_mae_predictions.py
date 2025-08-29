@@ -1,6 +1,7 @@
 import glob
 import os
 
+import tqdm
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 import PIL
@@ -15,12 +16,14 @@ if __name__ == '__main__':
     
     on_datalabs = os.path.isdir('/media/home/my_workspace')
     if on_datalabs:
-        prediction_dir = '/media/home/team_workspaces/Galaxy-Zoo-Euclid/huggingface/predictions/mwalmsley/euclid_q1/euclid-rr2-mae-lightning/0'
+        prediction_dir = '/media/home/team_workspaces/Galaxy-Zoo-Euclid/huggingface/predictions/mwalmsley/euclid_q1/euclid-rr2-mae-lightning'
     else:
         prediction_dir = '/home/walml/repos/zoobot-foundation/results/tmp_predictions'
 
     batch_locs = glob.glob(f'{prediction_dir}/0/*.pt')
-    for batch_loc in batch_locs:
+    assert batch_locs, f'No predictions found in {prediction_dir}'
+
+    for batch_loc in tqdm.tqdm(batch_locs):
         batch_index = os.path.basename(batch_loc).replace('.pt', '')  # 0, 1...
 
         batch_preds = torch.load(batch_loc)
