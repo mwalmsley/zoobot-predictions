@@ -38,6 +38,7 @@ def main(cfg):
 
     # datalabs only, for token
     if on_datalabs:
+        torch.set_float32_matmul_precision('medium')
         with open('/media/home/my_workspace/_credentials/secrets.txt') as f:
             token = json.load(f)['token']
     else:
@@ -56,7 +57,8 @@ def main(cfg):
 
     datamodule = create_datamodule(cfg, split='train', token=token)
 
-    pred_dir = '/home/walml/repos/zoobot-foundation/results/tmp_predictions'
+    pred_dir = f'predictions/{cfg.dataset.dataset_name}/{cfg.model.model_name}'
+    os.makedirs(os.path.join(pred_dir, '0'), exist_ok=True)  # 0 for first dataloader
     pred_writer = CustomWriter(output_dir=pred_dir, write_interval="batch")
 
     trainer = L.Trainer(

@@ -20,7 +20,7 @@
 
 # for datalabs
 # conda activate gpu
-# pip install timm datasets lightning hydra-core scikit-learn
+# pip install timm datasets lightning hydra-core scikit-learn wandb lightly
 # pip install -e repos/galaxy-datasets/.
 # pip install --no-deps -e repos/galaxy-datasets/.
 
@@ -140,6 +140,7 @@ def main(cfg):
 
     # datalabs only, for token
     if on_datalabs:
+        torch.set_float32_matmul_precision('medium')  # L4
         with open('/media/home/my_workspace/_credentials/secrets.txt') as f:
             token = json.load(f)['token']
     else:
