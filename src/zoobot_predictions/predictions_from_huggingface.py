@@ -8,6 +8,7 @@ import lightning as L
 from lightning.pytorch.callbacks import BasePredictionWriter
 
 import torch
+from huggingface_hub import hf_hub_download
 
 from representations_from_huggingface import create_datamodule
 
@@ -41,10 +42,15 @@ def main(cfg):
             token = json.load(f)['token']
     else:
         token = None
+    
+    # if 'lightning' in cfg.model.model_path: # assume ckpt file, not timm encoder
+    if cfg.model.model_path.startswith('local:'):
+        ckpt_path = cfg.model.model_path.replace('local:', '')
+    elif cfg.model.model_path.startswith('hf_hub:'):
+        repo_id = cfg.model.model_path.replace('hf_hub:', '')
+        ckpt_path = hf_hub_download(repo_id=repo_id, filename="model.ckpt", repo_type="model")
 
-
-    # this bit is different
-    model = pretrain.BaseHybridLearner.load_from_checkpoint(cfg.model.model_name)
+    model = pretrain.BaseHybridLearner.load_from_checkpoint(ckpt_path)
     model.to('cuda')
     model.eval()
 

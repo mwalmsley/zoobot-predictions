@@ -54,6 +54,7 @@ class DatasetRR2Config(DatasetConfig):
 @dataclass
 class ModelConfig:
     model_name: str
+    model_path: str
     pretrained: bool
     batch_size: dict
     indices_to_use: list
@@ -61,7 +62,8 @@ class ModelConfig:
 
 @dataclass
 class MAEConfig(ModelConfig):
-    model_name: str = "hf_hub:mwalmsley/euclid_encoder_mae_zoobot_vit_small_patch8_224"
+    model_name: str = 'euclid_encoder_mae_zoobot_vit_small_patch8_224'
+    model_path: str = "hf_hub:mwalmsley/euclid_encoder_mae_zoobot_vit_small_patch8_224"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 1024,
@@ -75,8 +77,9 @@ class MAEConfig(ModelConfig):
 
 @dataclass
 class LocalMAEConfig(ModelConfig):
-    # model_name: str = "/home/walml/Dropbox (The University of Manchester)/euclid/euclid_morphology/models/u11vazbb/checkpoints/model.ckpt"
-    model_name: str = "https://huggingface.co/mwalmsley/euclid-rr2-mae-lightning/resolve/main/model.ckpt"  # for datalabs
+    model_name: str = 'euclid-rr2-mae-lightning'
+    # model_path: str = "/home/walml/Dropbox (The University of Manchester)/euclid/euclid_morphology/models/u11vazbb/checkpoints/model.ckpt"
+    model_path: str = "hf_hub:mwalmsley/euclid-rr2-mae-lightning"  # for datalabs
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 1024,
@@ -91,7 +94,8 @@ class LocalMAEConfig(ModelConfig):
 @dataclass
 class ConvNextBaseConfig(ModelConfig):
     # uploaded with gz_evo export to hub, must be full timm encoder
-    model_name: str = "hf_hub:mwalmsley/baseline-encoder-regression-convnext_base" 
+    model_name: str = 'baseline-encoder-regression-convnext_base'
+    model_path: str = "hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 512,
@@ -105,7 +109,8 @@ class ConvNextBaseConfig(ModelConfig):
 @dataclass
 class MaxViTBaseConfig(ModelConfig):
     # uploaded with gz_evo export to hub, must be full timm encoder
-    model_name: str = "hf_hub:mwalmsley/zoobot-encoder-evo-maxvit_base" 
+    model_name: str = 'zoobot-encoder-evo-maxvit_base'
+    model_path: str = "hf_hub:mwalmsley/zoobot-encoder-evo-maxvit_base"
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 512,
