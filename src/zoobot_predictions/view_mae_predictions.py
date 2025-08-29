@@ -16,8 +16,10 @@ if __name__ == '__main__':
     
     on_datalabs = os.path.isdir('/media/home/my_workspace')
     if on_datalabs:
+        max_images = 128
         prediction_dir = '/media/home/team_workspaces/Galaxy-Zoo-Euclid/huggingface/predictions/mwalmsley/euclid_q1/euclid-rr2-mae-lightning'
     else:
+        max_images = None
         prediction_dir = '/home/walml/repos/zoobot-foundation/results/tmp_predictions'
 
     batch_locs = glob.glob(f'{prediction_dir}/0/*.pt')
@@ -37,10 +39,10 @@ if __name__ == '__main__':
 
 
 
-        images = batch_preds['images']
-        masked = batch_preds['masked']
-        reconstructed = batch_preds['reconstructed']
-        reconstruction_error = batch_preds['reconstruction_error']
+        images = batch_preds['images'][:max_images]
+        masked = batch_preds['masked'][:max_images]
+        reconstructed = batch_preds['reconstructed'][:max_images]
+        reconstruction_error = batch_preds['reconstruction_error'][:max_images]
 
 
         n_images = len(images)
