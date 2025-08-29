@@ -83,7 +83,7 @@ class LocalMAEConfig(ModelConfig):
     pretrained: bool = True
     batch_size: dict = field(default_factory=lambda: {
         "a100": 1024,
-        "l4": 1024,
+        "l4": 512,
         "t400": 2,
         'rtx2060': 128
     })
