@@ -53,9 +53,10 @@ if __name__ == '__main__':
         if not worst_indices:
             continue
 
-        bad_images.extend(images[worst_indices])
-        bad_masks.extend(masked[worst_indices])
-        bad_reconstructions.extend(reconstructed[worst_indices])
+        for i in worst_indices:
+            bad_images.append(images[i])
+            bad_masks.append(masked[i])
+            bad_reconstructions.append(reconstructed[i])
 
     n_images = len(bad_images)
 
