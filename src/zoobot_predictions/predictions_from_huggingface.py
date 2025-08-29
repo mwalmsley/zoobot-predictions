@@ -38,11 +38,13 @@ def main(cfg):
 
     # datalabs only, for token
     if on_datalabs:
+        base_pred_dir = '/media/home/team_workspaces/Galaxy-Zoo-Euclid/huggingface/predictions'
         torch.set_float32_matmul_precision('medium')
         with open('/media/home/my_workspace/_credentials/secrets.txt') as f:
             token = json.load(f)['token']
     else:
         token = None
+        base_pred_dir = '/home/walml/repos/zoobot-predictions/tmp'
     
     # if 'lightning' in cfg.model.model_path: # assume ckpt file, not timm encoder
     if cfg.model.model_path.startswith('local:'):
@@ -57,7 +59,8 @@ def main(cfg):
 
     datamodule = create_datamodule(cfg, split='train', token=token)
 
-    pred_dir = f'predictions/{cfg.dataset.dataset_name}/{cfg.model.model_name}'
+
+    pred_dir = os.path.join(base_pred_dir, cfg.dataset.dataset_name, cfg.model.model_name)
     os.makedirs(os.path.join(pred_dir, '0'), exist_ok=True)  # 0 for first dataloader
     pred_writer = CustomWriter(output_dir=pred_dir, write_interval="batch")
 
@@ -75,7 +78,8 @@ if __name__ == '__main__':
     """
     python zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=local_mae +hardware=home 
     
-    python zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=local_mae +hardware=datalabs
+    python src/zoobot_predictions/predictions_from_huggingface.py +dataset=debug +model=local_mae +hardware=datalabs ++hardware.num_workers=2
+    python src/zoobot_predictions/predictions_from_huggingface.py +dataset=euclid_q1 +model=local_mae +hardware=datalabs ++hardware.num_workers=24
     """
 
     
