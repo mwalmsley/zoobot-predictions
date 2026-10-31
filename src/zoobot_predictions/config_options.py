@@ -11,10 +11,13 @@ def zoobot_vit_small_patch8_224(pretrained: bool = False, **kwargs) -> VisionTra
     model_args = dict(
         # from aug config
         img_size=224,
+        # compare to ViT-Small  dict(patch_size=16, embed_dim=384, depth=12, num_heads=6)
         # from vit config
         patch_size=8, depth=12, num_heads=6, embed_dim=384, mlp_ratio=4, global_pool='avg', num_classes=0)
     model = _create_vision_transformer('zoobot_vit_small_patch8_224', pretrained=pretrained, **dict(model_args, **kwargs))  # type: ignore
     return model
+
+# model = timm.create_model(cfg.model.model_name, pretrained=cfg.model.pretrained)
 
 
 # datasets
